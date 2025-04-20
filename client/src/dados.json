@@ -1,0 +1,123 @@
+[
+    {
+      "id": 0,
+      "src": "http://localhost:8000/mundo2/mvHistoria.html",
+      "imagem": "/jogo1.png",
+      "titulo": "Magia dos Reinos",
+      "autor": "Mazalem",
+      "likes": "❤ 68.6k",
+      "descricao": "Embarque em uma jornada épica, aprendendo feitiços e desvendando segredos para se tornar o mago mais poderoso.",
+      "reproducoes": "⌨︎ 120.8k",
+      "lancamento": "29/08/2024",
+      "versao": "v0.1.0"
+    },
+    {
+      "id": 1,
+      "src": "https://emiardev.8thwall.app/rhythmz/",
+      "imagem": "/jogo2.png",
+      "titulo": "Estrelas em Guerra",
+      "autor": "Mazalem",
+      "likes": "❤ 140.6k",
+      "descricao": "Mergulhe em uma guerra intergaláctica, pilote naves, derrote alienígenas e explore o universo.",
+      "reproducoes": "⌨︎ 150.5k",
+      "lancamento": "29/08/2024",
+      "versao": "v0.1.0"
+    },
+    {
+      "id": 2,
+      "src": "https://framevr.io/museu-mcu",
+      "imagem": "/jogo3.png",
+      "titulo": "Museu Virtual",
+      "autor": "Mazalem",
+      "likes": "❤ 140.6k",
+      "descricao": "Explore um museu virtual, descubra artefatos antigos e resolva quebra-cabeças para revelar segredos da história.",
+      "reproducoes": "⌨︎ 200.8k",
+      "lancamento": "29/08/2024",
+      "versao": "v0.1.7"
+    },
+    {
+      "id": 3,
+      "src": "https://8thwall.8thwall.app/vehicle-controller/",
+      "imagem": "/jogo4.png",
+      "titulo": "Football Frenzy",
+      "autor": "SportyDev",
+      "likes": "❤ 45.3k",
+      "descricao": "Entre no campo e mostre suas habilidades em um emocionante jogo de futebol.",
+      "reproducoes": "⌨︎ 78.2k",
+      "lancamento": "10/09/2024",
+      "versao": "v1.0.0"
+    },
+    {
+      "id": 4,
+      "src": "https://eenieweenie.8thwall.app/lost-in-the-woods/",
+      "imagem": "/jogo5.png",
+      "titulo": "Chess Mastery",
+      "autor": "ChessPro",
+      "likes": "❤ 32.4k",
+      "descricao": "Desafie suas habilidades estratégicas com este jogo de xadrez clássico.",
+      "reproducoes": "⌨︎ 65.5k",
+      "lancamento": "15/09/2024",
+      "versao": "v1.2.0"
+    },
+    {
+      "id": 5,
+      "src": "https://kumpenghan.8thwall.app/130924/",
+      "imagem": "/jogo6.png",
+      "titulo": "Dance Mania",
+      "autor": "GrooveGames",
+      "likes": "❤ 56.7k",
+      "descricao": "Dance ao ritmo das batidas e conquiste o palco com seus movimentos.",
+      "reproducoes": "⌨︎ 89.9k",
+      "lancamento": "20/09/2024",
+      "versao": "v1.5.1"
+    },
+    {
+      "id": 6,
+      "src": "https://dcln.8thwall.app/mineshaft-mayhem/",
+      "imagem": "/jogo7.png",
+      "titulo": "Racing Rivals",
+      "autor": "SpeedsterDev",
+      "likes": "❤ 74.8k",
+      "descricao": "Acelere para a vitória em pistas emocionantes e desafiadoras.",
+      "reproducoes": "⌨︎ 95.4k",
+      "lancamento": "25/09/2024",
+      "versao": "v2.0.0"
+    },
+    {
+      "id": 7,
+      "src": "https://framevr.io/museu-mcu",
+      "imagem": "/jogo8.png",
+      "titulo": "Haunted House",
+      "autor": "SpookyGames",
+      "likes": "❤ 68.2k",
+      "descricao": "Explore a casa assombrada e descubra seus mistérios assustadores.",
+      "reproducoes": "⌨︎ 102.3k",
+      "lancamento": "01/10/2024",
+      "versao": "v0.9.2"
+    },
+    {
+      "id": 8,
+      "src": "https://8thwall.8thwall.app/studio-ball-sample/",
+      "imagem": "/jogo9.png",
+      "titulo": "Math Mania",
+      "autor": "EduTech",
+      "likes": "❤ 29.9k",
+      "descricao": "Desafie seu cérebro com problemas matemáticos e jogos educativos.",
+      "reproducoes": "⌨︎ 48.7k",
+      "lancamento": "05/10/2024",
+      "versao": "v1.3.3"
+    },
+    {
+      "id": 9,
+      "src": "http://localhost:3002/mundo2/mvHistoria.html",
+      "imagem": "/jogo10.png",
+      "titulo": "Wild West Showdown",
+      "autor": "CowboyGames",
+      "likes": "❤ 81.5k",
+      "descricao": "Viva o Velho Oeste e participe de duelos intensos e aventuras.",
+      "reproducoes": "⌨︎ 110.2k",
+      "lancamento": "10/10/2024",
+      "versao": "v2.2.0"
+    }
+  ]
+  
