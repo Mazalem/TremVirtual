@@ -214,8 +214,19 @@ const FormControl = styled.input`
   }
 `;
 
+const RadioInput = styled.input`
+  margin-right: 10px;
+`;
+
+const RadioLabel = styled.label`
+  color: #fff;
+  margin-right: 20px;
+  font-size:20px;
+`;
+
 export default function Login() {
   const [rightPanel, setRightPanel] = useState(false);
+  const [mensagem, setMensagem] = useState("");
   const url = process.env.REACT_APP_SERVIDOR;
   const navigate = useNavigate();
   
@@ -242,14 +253,44 @@ export default function Login() {
       .catch(() => alert('Erro ao realizar login'));
   }
 
+  function handleRegisterSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const jsonData = Object.fromEntries(formData.entries());
+
+    fetch('/apiusers/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(jsonData)
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.sucesso == true) {
+          alert(json.mensagem);
+          window.location.href = "/";
+        } else {
+          alert(json.mensagem);
+        }
+      })
+      .catch(() => alert('Erro ao realizar login'));
+  }
+
   return (
     <Container className={rightPanel ? 'right-panel-active' : ''}>
       <SignUpContainer>
-        <Form action='/apiusers/' method='post'>
+        <Form onSubmit={handleRegisterSubmit}>
           <Title>Registrar-se</Title><br/>
-          <FormControl type="text" placeholder="Nome" name='nome' />
-          <FormControl type="email" placeholder="Email" name='email' />
-          <FormControl type="password" placeholder="Senha" name='senha'/>
+          <FormControl type="text" placeholder="Nome" name='nome' required />
+          <FormControl type="email" placeholder="Email" name='email' required />
+          <FormControl type="password" placeholder="Senha" name='senha' required/>
+          <br/><label for="tipo">Você é:</label>
+          <br/><RadioInput type='radio' id='professor' name='tipo' value="Professor" required/>
+          <RadioLabel htmlFor='professor'>Professor</RadioLabel>
+          <RadioInput type='radio' id='aluno' name='tipo' value="Aluno" />
+          <RadioLabel htmlFor='aluno'>Aluno</RadioLabel><br/><br></br>
+
           <Button type='Submit' style={{marginLeft: 35 + '%'}}>Registrar-se</Button>
         </Form>
       </SignUpContainer>
@@ -257,8 +298,8 @@ export default function Login() {
       <SignInContainer>
         <Form onSubmit={handleLoginSubmit}>
           <Title>Login</Title><br/>
-          <FormControl type="email" placeholder="Email" name='email' />
-          <FormControl type="password" placeholder="Password" name='senha' />
+          <FormControl type="email" placeholder="Email" name='email' required />
+          <FormControl type="password" placeholder="Password" name='senha' required />
           <Button type='Submit' style={{marginLeft: 40 + '%'}}>Login</Button>
         </Form>
       </SignInContainer>

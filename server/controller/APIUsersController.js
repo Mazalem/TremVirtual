@@ -1,11 +1,17 @@
 const API = require("../model/APIUsersModel");
 
 exports.cria = async function (req, res) {
-    var nome = req.body.nome;
     var email = req.body.email;
-    var senha = req.body.senha;
-    await API.cria({nome: nome, email: email, senha: senha});
-    res.redirect('/');
+    var liberado = await API.liberado(email);
+    if(liberado) {
+      var nome = req.body.nome;
+      var senha = req.body.senha;
+      var tipo = req.body.tipo;
+      await API.cria({nome: nome, email: email, senha: senha, tipo: tipo});
+      res.status(200).json({ sucesso: true, mensagem: "Usuário criado com sucesso!" });
+    }else{
+      res.status(500).json({ sucesso:false, mensagem: "E-mail já cadastrado!" });
+    }
 }
 
 exports.login = async function (req, res) {
@@ -17,7 +23,8 @@ exports.login = async function (req, res) {
   req.session.usuario = {
     id: user._id,
     email: user.email,
-    nome: user.nome
+    nome: user.nome,
+    tipo: user.tipo
   };
   return res.json({ sucesso: true, mensagem: 'Login bem-sucedido' });
 };
@@ -38,7 +45,7 @@ exports.logout = (req, res) => {
 
 exports.verificarLogin = (req, res) => {
   if (req.session.usuario) {
-    res.json({ logado: true, user: req.session.usuario });
+    res.json({ logado: true, user: req.session.usuario});
   } else {
     res.json({ logado: false });
   }

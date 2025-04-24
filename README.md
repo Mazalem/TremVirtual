@@ -42,7 +42,7 @@ npm install react-dom react-router-dom react-scripts bootstrap bootstrap-icons s
 3. Substitua as pastas `public/` e `src/` pelos arquivos do seu projeto.
 4. No terminal da pasta `client`, execute:
 ```
-`npm run build`
+npm run build
 ```
 ### 🟡Backend (Node.js)
 

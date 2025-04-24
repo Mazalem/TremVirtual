@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const StyledOffCanvas = styled.div`
   background-color: #2c2525d7;
@@ -62,6 +63,25 @@ const OptionItem = styled.li`
   }
 `;
 
+function AreaRestrita({ children }) {
+  const [validado, setValidado] = useState(null);
+
+  useEffect(() => {
+    fetch('/apiusers/verificarLogin', { credentials: 'include' })
+      .then(res => res.json())
+      .then(json => {
+        setValidado(json.user.tipo == "Professor");
+      })
+      .catch(() => {
+        setValidado(false);
+      });
+  }, []);
+
+  if (!validado) return null;
+
+  return <>{children}</>;
+}
+
 function AreaUsuarioOffCanvas() {
   const navigate = useNavigate();
 
@@ -107,11 +127,13 @@ function AreaUsuarioOffCanvas() {
             </OptionItem>
           </a>
 
+          <AreaRestrita>
           <a href="/adicionarMundo">
             <OptionItem>
               <i className="bi bi-house-add-fill"/> Adicionar Mundos
             </OptionItem>
           </a>
+          </AreaRestrita>
 
           <OptionItem>
             <i className="bi bi-chat-dots-fill"/> Chats

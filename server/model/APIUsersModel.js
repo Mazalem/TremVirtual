@@ -46,6 +46,14 @@ class APIModel {
     const user = await colecao.findOne({ email: email, senha: senha });
     return user || false;
   }  
+
+  async liberado(email) {
+    await conexao_bd();
+    const colecao = bd().collection("users");
+    const usuario = await colecao.findOne({ email: email });
+    return usuario ? false : true;
+  }
+
     
   /*
   async altera(dado) {

@@ -101,6 +101,7 @@ function AppRoutes() {
   const [dados, setDados] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [professor, setProfessor] = useState(null);
   const navigate = useNavigate();
   
   function RotaPrivada({ children }) {
@@ -116,7 +117,8 @@ function AppRoutes() {
     fetch('/apiusers/verificarLogin', { credentials: 'include' })
       .then(res => res.json())
       .then(json => {
-        setIsLoggedIn(json.logado);
+        setIsLoggedIn(json.logado); 
+        setProfessor(json.user.tipo == "Professor");
         if (!json.logado) {
           fetch('/apiusers/logout', { credentials: 'include' });
         }
@@ -124,6 +126,7 @@ function AppRoutes() {
       .catch(() => {
         fetch('/apiusers/logout', { credentials: 'include' });
         setIsLoggedIn(false);
+        setProfessor(false);
       })
       .finally(() => setLoading(false));
   }, [navigate]);
@@ -143,6 +146,14 @@ function AppRoutes() {
       </LoadingOverlay>
     );
   }
+
+  function RotaProfessor({ children }) {
+    const location = useLocation();
+    if (!professor) {
+      return <Erro codigo="404" texto="Página não encontrada."/>;
+    }
+    return children;
+  }
   
   return (
     <Layout>
@@ -150,9 +161,9 @@ function AppRoutes() {
         <Route path="/" element={<RotaPublica><LoginRegister/></RotaPublica>}/>
         <Route path="/home" element={<RotaPrivada><TelaPrincipal jogos={dados}/></RotaPrivada>} />
         <Route path="/jogo/:index" element={<RotaPrivada><TelaJogo jogos={dados}/></RotaPrivada>} />
-        <Route path="/adicionarMundo" element={<RotaPrivada><FormularioInsercao/></RotaPrivada>} />
+        <Route path="/adicionarMundo" element={<RotaPrivada><RotaProfessor><FormularioInsercao/></RotaProfessor></RotaPrivada>} />
         <Route path="/perfilUsuario" element={<RotaPrivada><AreaUsuario/></RotaPrivada>} />
-        <Route path="*" element={<RotaPublica><Erro codigo="404" texto="Página não encontrada."/></RotaPublica>} />
+        <Route path="*" element={<Erro codigo="404" texto="Página não encontrada."/>} />
       </Routes>
     </Layout>
   );

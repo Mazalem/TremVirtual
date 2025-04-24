@@ -34,7 +34,7 @@ const Botao = styled.button`
 function Erro(props) {
   return (
     <Container>
-      <h1>{props.codigo}<br/>{props.texto}<br/><a href='/'><Botao type='Button'>Voltar</Botao></a></h1>
+      <h1>{props.codigo}<br/>{props.texto}<br/><a href='/home'><Botao type='Button'>Voltar</Botao></a></h1>
     </Container>
   );
 }
