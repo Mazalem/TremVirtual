@@ -20,7 +20,7 @@ const Rodape = styled.footer`
 function Footer() {
     return (
         <Rodape>
-            <p>© 2024 Trem Virtual, IFSudesteMG - Campus Manhuaçu. Todos os direitos reservados.</p>
+            <p>© 2025 Trem Virtual, IFSudesteMG - Campus Manhuaçu. Todos os direitos reservados.</p>
         </Rodape>
     )
 }

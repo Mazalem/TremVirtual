@@ -8,7 +8,7 @@ exports.cria = async function (req, res) {
       var senha = req.body.senha;
       var tipo = req.body.tipo;
       await API.cria({nome: nome, email: email, senha: senha, tipo: tipo});
-      res.status(200).json({ sucesso: true, mensagem: "Usuário criado com sucesso!" });
+      res.status(200).json({ sucesso: true, mensagem: "Usuário cadastrado com sucesso!" });
     }else{
       res.status(500).json({ sucesso:false, mensagem: "E-mail já cadastrado!" });
     }
@@ -23,10 +23,11 @@ exports.login = async function (req, res) {
   req.session.usuario = {
     id: user._id,
     email: user.email,
+    senha: user.senha,
     nome: user.nome,
     tipo: user.tipo
   };
-  return res.json({ sucesso: true, mensagem: 'Login bem-sucedido' });
+  return res.json({ sucesso: true, mensagem: 'Login feito com sucesso!' }); 
 };
 
 exports.logout = (req, res) => {

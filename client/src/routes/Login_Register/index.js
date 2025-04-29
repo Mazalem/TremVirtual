@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import MessageOverlay from '../../components/MessageOverlay';
 
 const show = keyframes`
   0% {
@@ -214,21 +215,101 @@ const FormControl = styled.input`
   }
 `;
 
-const RadioInput = styled.input`
-  margin-right: 10px;
+const RadioGroup = styled.div`
+  display: flex;
+  gap: 35%;
+  margin-top: 10px;
+  align-items:center;
+  justify-content: center;
 `;
 
 const RadioLabel = styled.label`
-  color: #fff;
-  margin-right: 20px;
-  font-size:20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const RadioInput = styled.input`
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  background-color: transparent;
+
+  &:checked {
+    background-color: #ff6347;
+    border-color: #ff6347;
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+`;
+
+const CheckButton = styled.input.attrs({ type: 'checkbox' })`
+  appearance: none;
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  background-color: transparent;
+
+  &:checked {
+    background-color: #ff6347;
+    border-color: #ff6347;
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
 `;
 
 export default function Login() {
   const [rightPanel, setRightPanel] = useState(false);
   const [mensagem, setMensagem] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
+  const [showPasswordLogin, setShowPasswordLogin] = useState(false);
+  const [showPasswordRegister, setShowPasswordRegister] = useState(false);
+  
   const url = process.env.REACT_APP_SERVIDOR;
   const navigate = useNavigate();
+
+  function togglePasswordLogin() {
+    setShowPasswordLogin(prev => !prev);
+  }
+
+  function togglePasswordRegister() {
+    setShowPasswordRegister(prev => !prev);
+  }
   
   function handleLoginSubmit(e) {
     e.preventDefault();
@@ -245,12 +326,22 @@ export default function Login() {
       .then(res => res.json())
       .then(json => {
         if (json.sucesso == true) {
-          window.location.href = "/home";
+          setSuccess(true);
+          setMensagem(json.mensagem);
+          setTimeout(() => {
+            setMensagem('');
+            window.location.href = "/home";
+          }, 2000);
         } else {
-          alert(json.mensagem || 'Falha no login');
+          setFailure(true);
+          setMensagem(json.mensagem)
+          setTimeout(() => {
+            setFailure(false);
+            setMensagem("");
+          }, 1000);
         }
       })
-      .catch(() => alert('Erro ao realizar login'));
+      .catch(() => alert('Erro ao realizar login')); 
   }
 
   function handleRegisterSubmit(e) {
@@ -268,13 +359,22 @@ export default function Login() {
       .then(res => res.json())
       .then(json => {
         if (json.sucesso == true) {
-          alert(json.mensagem);
-          window.location.href = "/";
+          setSuccess(true);
+          setMensagem(json.mensagem);
+          setTimeout(() => {
+            setMensagem('');
+            window.location.href = "/";
+          }, 2000);
         } else {
-          alert(json.mensagem);
+          setFailure(true);
+          setMensagem(json.mensagem)
+          setTimeout(() => {
+            setFailure(false);
+            setMensagem("");
+          }, 1000);
         }
       })
-      .catch(() => alert('Erro ao realizar login'));
+      .catch(() => alert('Erro ao realizar cadastro'));
   }
 
   return (
@@ -282,14 +382,22 @@ export default function Login() {
       <SignUpContainer>
         <Form onSubmit={handleRegisterSubmit}>
           <Title>Registrar-se</Title><br/>
-          <FormControl type="text" placeholder="Nome" name='nome' required />
-          <FormControl type="email" placeholder="Email" name='email' required />
-          <FormControl type="password" placeholder="Senha" name='senha' required/>
-          <br/><label for="tipo">Você é:</label>
-          <br/><RadioInput type='radio' id='professor' name='tipo' value="Professor" required/>
-          <RadioLabel htmlFor='professor'>Professor</RadioLabel>
-          <RadioInput type='radio' id='aluno' name='tipo' value="Aluno" />
-          <RadioLabel htmlFor='aluno'>Aluno</RadioLabel><br/><br></br>
+          <FormControl type="text" placeholder="Digite seu Nome" name='nome' required />
+          <FormControl type="email" placeholder="Digite seu Email" name='email' required />
+          <div style={{ display: "flex", justifyContent: "center", maxWidth: 100 + "%" }}>
+              <FormControl style={{maxWidth: 69+"%"}} name="senha" type={showPasswordRegister ? "text" : "password"} id="senha" placeholder="Digite sua senha" required />
+              <Button style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePasswordRegister} >
+                <span id="icone"> <i className={`bi ${showPasswordRegister ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
+              </Button>
+          </div>
+
+          <label for="tipo">Você é:</label>
+          <RadioGroup>
+            <RadioLabel>
+              <RadioInput type='radio' id='professor' name='tipo' value="Professor" required/> Professor    |    
+              <RadioInput type='radio' id='aluno' name='tipo' value="Aluno" /> Aluno
+            </RadioLabel>
+          </RadioGroup><br/>
 
           <Button type='Submit' style={{marginLeft: 35 + '%'}}>Registrar-se</Button>
         </Form>
@@ -298,8 +406,14 @@ export default function Login() {
       <SignInContainer>
         <Form onSubmit={handleLoginSubmit}>
           <Title>Login</Title><br/>
-          <FormControl type="email" placeholder="Email" name='email' required />
-          <FormControl type="password" placeholder="Password" name='senha' required />
+          <FormControl type="email" placeholder="Digite seu Email" name='email' required />
+          <div style={{ display: "flex", justifyContent: "center", maxWidth: 100 + "%" }}>
+              <FormControl style={{maxWidth: 69+"%"}} name="senha" type={showPasswordLogin ? "text" : "password"} id="senha" placeholder="Digite sua senha" required />
+              <Button style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePasswordLogin} >
+                <span id="icone"> <i className={`bi ${showPasswordLogin ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
+              </Button>
+          </div>
+          <div style={{display:"flex", justifyContent: "center", alignItems:"center"}}><CheckButton name='manter' value={true}/> <label for="manter">Manter-me Conectado(a)</label></div><br/>
           <Button type='Submit' style={{marginLeft: 40 + '%'}}>Login</Button>
         </Form>
       </SignInContainer>
@@ -319,6 +433,23 @@ export default function Login() {
           </OverlayRight>
         </Overlay>
       </OverlayContainer>
+
+      {(
+        <MessageOverlay
+          condicao={success}
+          sucesso={success}
+          mensagem={mensagem}
+        />
+      )}
+
+        {(
+          <MessageOverlay
+          condicao = {failure}
+          sucesso = {!failure}
+          mensagem = {mensagem}
+          />
+        )}
+
     </Container>
   );
 }

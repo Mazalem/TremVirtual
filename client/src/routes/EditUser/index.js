@@ -1,5 +1,5 @@
-import { useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { useEffect, useState } from 'react';
 
 const GlobalStyle = createGlobalStyle`
   @keyframes spin {
@@ -23,8 +23,7 @@ const Botao = styled.button`
   width: 100%;
   cursor: pointer;
 
-  &:hover,
-  &:focus {
+  &:hover {
     background-color: #5f505091;
     border-color: #fff;
     color: #ff6347;
@@ -163,9 +162,60 @@ const SuccessOverlay = styled.div`
   }
 `;
 
+const RadioGroup = styled.div`
+  display: flex;
+  gap: 35%;
+  margin-top: 10px;
+  align-items:center;
+  justify-content: center;
+`;
+
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const RadioInput = styled.input`
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  background-color: transparent;
+
+  &:checked {
+    background-color: #ff6347;
+    border-color: #ff6347;
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+`;
+
 function FormularioInsercao() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  function togglePassword() {
+    setShowPassword(prev => !prev);
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -194,35 +244,61 @@ function FormularioInsercao() {
     });
   };
 
+  const [logado, setLogado] = useState([]);
+  useEffect(() => {
+    fetch('/apiusers/verificarLogin', { credentials: 'include' })
+      .then(res => res.json())
+      .then(json => {
+        setLogado(json.user);
+      })
+      .catch(() => {
+        fetch('/apiusers/logout', { credentials: 'include' });
+      });
+  }, []);
+
   return (
     <>
       <GlobalStyle />
-
       <Container>
-        <Title>Adicionar Jogo</Title>
+        <Title>Editar Usuário</Title>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+
           <div>
-            <label htmlFor="nome" className="form-label">Nome do Jogo</label>
-            <FormControl name="nome" type="text" id="nome" placeholder="Digite o nome do jogo" required />
+            <label htmlFor="nome" className="form-label">Nome do Usuário</label>
+            <FormControl name="nome" type="text" id="nome" placeholder="Digite o nome do Usuário" value={logado.nome || ''} required/>
           </div>
 
           <div>
-            <label htmlFor="descricao" className="form-label">Descrição</label>
-            <FormTextArea name="descricao" id="descricao" rows="3" placeholder="Digite a descrição do jogo" required />
+            <label htmlFor="email" className="form-label">Email</label>
+            <FormControl  name="email" type="email" id="email" placeholder="Digite o email do Usuário" value={logado.email || ''} required/>
           </div>
 
           <div>
-            <label htmlFor="autor" className="form-label">Autor</label>
-            <FormControl name="autor" type="text" id="autor" placeholder="Digite o nome do autor" required />
+            <label htmlFor="senha" className="form-label">Senha</label>
+            <div style={{ display: "flex" }}>
+              <FormControl name="senha" type={showPassword ? "text" : "password"} id="senha" placeholder="Digite a senha" value={logado.senha || ""} required />
+              <Botao style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePassword} >
+                <span id="icone"> <i className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
+              </Botao>
+            </div>
           </div>
 
           <div>
-            <label htmlFor="jogoZip" className="form-label">Arquivo ZIP do Jogo</label>
-            <FormControl name="jogoZip" type="file" id="jogoZip" accept=".zip" />
-          </div>
+            <label htmlFor="tipo" className="form-label">Tipo de Usuário</label>
+            <RadioGroup>
+              <RadioLabel>
+                <RadioInput type="radio" name="tipo" value="Professor" checked={logado.tipo === 'Professor'} onChange={() => {}}/>
+                Professor
+              </RadioLabel>
+              <RadioLabel>
+                <RadioInput type="radio" name="tipo" value="Aluno" checked={logado.tipo === 'Aluno'} onChange={() => {}} />
+                Aluno
+              </RadioLabel>
+            </RadioGroup>
+          </div><br/>
 
           <div>
-            <Botao type="submit">Adicionar Jogo</Botao>
+            <Botao type="submit">Editar Usuário</Botao>
           </div>
         </form>
 
@@ -235,10 +311,9 @@ function FormularioInsercao() {
 
         {success && (
           <SuccessOverlay>
-              <i className="bi bi-check-circle" style={{ color: 'red', marginRight: '8px' }} />  Mundo criado com sucesso!
+              <i className="bi bi-check-circle" style={{ color: 'red', marginRight: '8px' }} />  Usuário editado com sucesso!
           </SuccessOverlay>
         )}
-
       </Container>
     </>
   );

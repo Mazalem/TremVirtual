@@ -11,6 +11,7 @@ import TelaPrincipal from './routes/TelaPrincipal';
 import TelaJogo from './routes/TelaJogo';
 import FormularioInsercao from './routes/FormularioInsercao';
 import AreaUsuario from './routes/AreaUsuario';
+import EditUser from './routes/EditUser';
 import Erro from './components/Erro';
 import LoginRegister from './routes/Login_Register';
 import { useEffect, useState } from 'react';
@@ -82,7 +83,7 @@ function Layout({ children }) {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const rotaValida = /^\/(home|jogo\/[^\/]+|adicionarMundo|perfilUsuario)$/.test(pathname);
+  const rotaValida = /^\/(home|jogo\/[^\/]+|adicionarMundo|perfilUsuario|editarUsuario)$/.test(pathname);
 
   const mostrarNavFooter = rotaValida;
   const removerMargem = !rotaValida && pathname !== '/';
@@ -163,6 +164,7 @@ function AppRoutes() {
         <Route path="/jogo/:index" element={<RotaPrivada><TelaJogo jogos={dados}/></RotaPrivada>} />
         <Route path="/adicionarMundo" element={<RotaPrivada><RotaProfessor><FormularioInsercao/></RotaProfessor></RotaPrivada>} />
         <Route path="/perfilUsuario" element={<RotaPrivada><AreaUsuario/></RotaPrivada>} />
+        <Route path="/editarUsuario" element={<RotaPrivada><EditUser/></RotaPrivada>} />
         <Route path="*" element={<Erro codigo="404" texto="Página não encontrada."/>} />
       </Routes>
     </Layout>

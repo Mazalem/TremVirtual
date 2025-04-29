@@ -32,45 +32,28 @@ class APIModel {
     const mundos = await colecao.find({}).toArray();
     return mundos;
   }
+
   async consulta(id) {
-    await conexao_bd()
-    const colecao = bd().collection("mundos_virtuais")
-    const mundo = await colecao.findOne({_id: new ObjectId(id)});
-    return mundo
-  }
-    
-  /*
-  async altera(dado) {
     await conexao_bd();
-    const colecao = bd().collection("clima");
+    const colecao = bd().collection("mundos_virtuais");
+    const mundo = await colecao.findOne({ _id: new ObjectId(id) });
+    return mundo;
+  }
+
+  async update(id, dadoAtualizado) {
+    await conexao_bd();
+    const colecao = bd().collection("mundos_virtuais");
     await colecao.updateOne(
-      { dia: dado.dia, mes: dado.mes, ano: dado.ano },
-      {
-        $set: {
-          temperatura: dado.temperatura,
-          umidade: dado.umidade,
-          chuva: dado.chuva
-        },
-      }
+      { _id: new ObjectId(id) },
+      { $set: dadoAtualizado }
     );
   }
 
-  async deleta(dia, mes, ano) {
+  async delete(id) {
     await conexao_bd();
-    const colecao = bd().collection("clima");
-    const clima = await colecao.findOne({ dia: dia, mes: mes, ano: ano });
-    if (!clima) {
-      throw new Error(`Não existe a clima para essa data`);
-    } else {
-      await colecao.findOneAndDelete({ dia: dia, mes: mes, ano: ano });
-    }
+    const colecao = bd().collection("mundos_virtuais");
+    await colecao.deleteOne({ _id: new ObjectId(id) });
   }
-
-  async lista(mes, ano) {
-    await conexao_bd();
-    const colecao = bd().collection("clima");
-    const climas = await colecao.find({mes: mes, ano: ano}).project({_id: 0, dia: 1, temperatura:1, umidade: 1, chuva:1}).toArray();
-    return climas;
-  }*/
 }
+
 module.exports = new APIModel();

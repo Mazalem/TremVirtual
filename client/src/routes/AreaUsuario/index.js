@@ -47,13 +47,13 @@ function AreaUsuario() {
     <ProfileWrapper>
       <div className="container">
         <CoverPhoto>
-          <ProfilePhoto src="https://via.placeholder.com/150" alt="Profile" />
+          <ProfilePhoto src="public/fotoUsuario.png" alt="Profile" />
         </CoverPhoto>
         <ProfileInfo>
           <ProfileName>Seu Nome</ProfileName>
           <p>Bio do Usuario"</p>
           <ProfileButtons>
-            <button className="btn btn-primary">Opcao 1</button>
+            <a href='/editarUsuario'><button className="btn btn-primary">Editar Usuário</button></a>
             <button className="btn btn-secondary">Opcao 2</button>
           </ProfileButtons>
         </ProfileInfo>

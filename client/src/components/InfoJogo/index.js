@@ -72,7 +72,7 @@ function InfoJogo(props) {
     <Container>
       <TopSection>
         <Left>
-          <Title>{props.titulo} | #{props.id}</Title>
+          <Title>{props.titulo}  <a style={{color: 'rgba(255, 255, 255, 0.15)', marginLeft: '5px'}}>#{props.id}</a></Title>
           <Info>{props.autor} | ⌨︎ {props.reproducoes} | ❤ {props.likes}</Info>
         </Left>
         <Right>
