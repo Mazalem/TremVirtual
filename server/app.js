@@ -6,12 +6,12 @@ var logger = require('morgan');
 require('dotenv').config();
 const cors = require('cors');
 
-
 var APIMundos = require('./routes/APIMundos');
 var APIUsers = require('./routes/APIUsers');
 
 var app = express();
 var session = require('express-session');
+app.use(cookieParser());
 app.use(session({
   secret: 'Ds93kd!9#lPaTosQmL1$ZupX!L9q7Jcn',
   resave: false,
@@ -32,7 +32,6 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 

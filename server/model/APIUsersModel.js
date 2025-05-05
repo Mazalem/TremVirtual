@@ -61,7 +61,9 @@ class APIModel {
       { _id: new ObjectId(id) },
       { $set: dadoAtualizado }
     );
-  }
+    const usuario = await colecao.findOne({ _id: new ObjectId(id) });
+    return usuario;
+}
 
   async delete(id) {
     await conexao_bd();

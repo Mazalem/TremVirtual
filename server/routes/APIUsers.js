@@ -4,6 +4,8 @@ const APIController = require('../controller/APIUsersController');
 
 router.get('/', (req, res) => {res.json({ message: 'API está funcionando!' });});
 router.post('/', APIController.cria);
+router.put('/', APIController.atualiza);
+router.post('/autologin', APIController.autoLogin);
 router.post('/login', APIController.login);
 router.get('/logout', APIController.logout);
 router.get('/verificarLogin', APIController.verificarLogin);

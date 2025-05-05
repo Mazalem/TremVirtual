@@ -101,6 +101,7 @@ function Layout({ children }) {
 function AppRoutes() {
   const [dados, setDados] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [autoLogin, setAutoLogin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [professor, setProfessor] = useState(null);
   const navigate = useNavigate();
@@ -108,30 +109,38 @@ function AppRoutes() {
   function RotaPrivada({ children }) {
     return isLoggedIn ? children : <Navigate to="/" />;
   }
+  
   function RotaPublica({ children }) {
-    setIsLoggedIn(false);
-    fetch('/apiusers/logout', { credentials: 'include' });
-    return children;
-  }
+    useEffect(() => {
+      fetch('/apiusers/autologin', {
+        method: 'POST',
+        credentials: 'include'
+      })
+        .then(res => res.json())
+        .then(json => {
+          setAutoLogin(json.sucesso);
+          if (autoLogin === true) {
+            window.location.href = "/home";
+          }
+        });
+      }, []);
+      return children;
+  }  
 
   useEffect(() => {
     fetch('/apiusers/verificarLogin', { credentials: 'include' })
       .then(res => res.json())
       .then(json => {
         setIsLoggedIn(json.logado); 
-        setProfessor(json.user.tipo == "Professor");
-        if (!json.logado) {
-          fetch('/apiusers/logout', { credentials: 'include' });
-        }
+        setProfessor(json.user?.tipo === "Professor");
       })
       .catch(() => {
-        fetch('/apiusers/logout', { credentials: 'include' });
         setIsLoggedIn(false);
         setProfessor(false);
       })
       .finally(() => setLoading(false));
   }, [navigate]);
-
+  
   useEffect(() => {
     fetch('/apimundos/lista')
       .then(res => res.json())

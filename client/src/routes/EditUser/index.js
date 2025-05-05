@@ -1,5 +1,6 @@
 import styled, { createGlobalStyle } from "styled-components";
 import { useEffect, useState } from 'react';
+import MessageOverlay from "../../components/MessageOverlay";
 
 const GlobalStyle = createGlobalStyle`
   @keyframes spin {
@@ -211,7 +212,15 @@ const RadioInput = styled.input`
 function FormularioInsercao() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
+  const [mensagem, setMensagem] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [logado, setLogado] = useState([]);
+  const [tipo, setTipo] = useState('Professor');
+
+  function handleTipoChange(event){
+    setTipo(event.target.value);
+  };
 
   function togglePassword() {
     setShowPassword(prev => !prev);
@@ -221,35 +230,54 @@ function FormularioInsercao() {
     event.preventDefault();
     setLoading(true);
     setSuccess(false);
-
+  
     const formData = new FormData(event.target);
-
-    fetch("/apimundos", {
-      method: "POST",
-      body: formData,
+  
+    const data = {
+      nome: formData.get("nome"),
+      email: formData.get("email"),
+      senha: formData.get("senha"),
+      tipo: formData.get("tipo"),
+    };
+  
+    fetch("/apiusers", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data),
     })
-    .then((response) => response.json())
-    .then((data) => {
-      setLoading(false);
-      setTimeout(() => {
-        setSuccess(true);
-      }, 100);
-      setTimeout(() => {
-        window.location.href = "/home";
-      }, 2000);
-    })
-    .catch((error) => {
-      console.error("Erro ao enviar o arquivo:", error);
-      setLoading(false);
-    });
-  };
+      .then((res) => res.json())
+      .then((json) => {
+        setLoading(false);
+        if (json.success) {
+          setSuccess(true);
+          setMensagem(json.mensagem);
+          setTimeout(() => {
+            setMensagem('');
+            window.location.href = "/perfilUsuario";
+          }, 2000);
+        } else {
+          setFailure(true);
+          setMensagem(json.mensagem);
+          setTimeout(() => {
+            setFailure(false);
+            setMensagem("");
+          }, 1000);
+        }
+      })
+      .catch((error) => {
+        window.location.href = "/perfilUsuario";
+        alert("Erro ao atualizar usuário.");
+      });
+  };  
 
-  const [logado, setLogado] = useState([]);
   useEffect(() => {
     fetch('/apiusers/verificarLogin', { credentials: 'include' })
       .then(res => res.json())
       .then(json => {
         setLogado(json.user);
+        setTipo(json.user.tipo);
       })
       .catch(() => {
         fetch('/apiusers/logout', { credentials: 'include' });
@@ -261,7 +289,7 @@ function FormularioInsercao() {
       <GlobalStyle />
       <Container>
         <Title>Editar Usuário</Title>
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <form onSubmit={handleSubmit}>
 
           <div>
             <label htmlFor="nome" className="form-label">Nome do Usuário</label>
@@ -287,11 +315,11 @@ function FormularioInsercao() {
             <label htmlFor="tipo" className="form-label">Tipo de Usuário</label>
             <RadioGroup>
               <RadioLabel>
-                <RadioInput type="radio" name="tipo" value="Professor" checked={logado.tipo === 'Professor'} onChange={() => {}}/>
+                <RadioInput type="radio" name="tipo" value="Professor" checked={tipo === 'Professor'} onChange={handleTipoChange} />
                 Professor
               </RadioLabel>
               <RadioLabel>
-                <RadioInput type="radio" name="tipo" value="Aluno" checked={logado.tipo === 'Aluno'} onChange={() => {}} />
+                <RadioInput type="radio" name="tipo" value="Aluno" checked={tipo === 'Aluno'} onChange={handleTipoChange} />
                 Aluno
               </RadioLabel>
             </RadioGroup>
@@ -309,11 +337,22 @@ function FormularioInsercao() {
           </LoadingOverlay>
         )}
 
-        {success && (
-          <SuccessOverlay>
-              <i className="bi bi-check-circle" style={{ color: 'red', marginRight: '8px' }} />  Usuário editado com sucesso!
-          </SuccessOverlay>
+        {(
+          <MessageOverlay
+            condicao={success}
+            sucesso={success}
+            mensagem={mensagem}
+          />
         )}
+        
+        {(
+          <MessageOverlay
+          condicao = {failure}
+          sucesso = {!failure}
+          mensagem = {mensagem}
+          />
+        )}
+
       </Container>
     </>
   );

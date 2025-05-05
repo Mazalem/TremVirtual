@@ -302,7 +302,7 @@ export default function Login() {
   
   const url = process.env.REACT_APP_SERVIDOR;
   const navigate = useNavigate();
-
+  
   function togglePasswordLogin() {
     setShowPasswordLogin(prev => !prev);
   }
@@ -316,7 +316,8 @@ export default function Login() {
     const form = e.target;
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
-
+    jsonData.manter = formData.get('manter') === 'true';
+  
     fetch('/apiusers/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -334,15 +335,15 @@ export default function Login() {
           }, 2000);
         } else {
           setFailure(true);
-          setMensagem(json.mensagem)
+          setMensagem(json.mensagem);
           setTimeout(() => {
             setFailure(false);
             setMensagem("");
           }, 1000);
         }
       })
-      .catch(() => alert('Erro ao realizar login')); 
-  }
+      .catch(() => alert('Erro ao realizar login'));
+  }  
 
   function handleRegisterSubmit(e) {
     e.preventDefault();
