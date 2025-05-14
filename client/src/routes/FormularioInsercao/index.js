@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 import styled, { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -166,6 +166,16 @@ const SuccessOverlay = styled.div`
 function FormularioInsercao() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [usuario, setUsuario] = useState("");
+  
+  useEffect(() => {
+    fetch('/apiusers/verificarLogin', { credentials: 'include' })
+      .then(res => res.json())
+      .then(json => {
+        setUsuario(json.user);
+      })
+      .catch(err => console.error('Erro ao carregar o usuário', err));
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -177,6 +187,7 @@ function FormularioInsercao() {
     fetch("/apimundos", {
       method: "POST",
       body: formData,
+      credentials: "include"
     })
     .then((response) => response.json())
     .then((data) => {
@@ -221,6 +232,8 @@ function FormularioInsercao() {
             <FormControl name="jogoZip" type="file" id="jogoZip" accept=".zip" />
           </div>
 
+          <input type="hidden" name="responsavelId" value={usuario.id}/>
+
           <div>
             <Botao type="submit">Adicionar Jogo</Botao>
           </div>
@@ -235,10 +248,9 @@ function FormularioInsercao() {
 
         {success && (
           <SuccessOverlay>
-              <i className="bi bi-check-circle" style={{ color: 'red', marginRight: '8px' }} />  Mundo criado com sucesso!
+              <i className="bi bi-check-circle" style={{ color: 'green', marginRight: '8px' }} />  Mundo criado com sucesso!
           </SuccessOverlay>
         )}
-
       </Container>
     </>
   );

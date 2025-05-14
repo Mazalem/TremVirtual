@@ -39,6 +39,7 @@ function obterDataAtualFormatada() {
     var nome = req.body.nome;
     var autor = req.body.autor;
     var descricao = req.body.descricao;
+    var responsavelId = req.body.responsavelId;
     const zipPath = req.file.path;
     const projectName = "project_" + nome.replace(/\s+/g, '').toLowerCase() + "_" + autor.replace(/\s+/g, '').toLowerCase() + "_" + Date.now();
     const extractPath = path.join(PROJECTS_DIR, projectName);
@@ -88,6 +89,7 @@ function obterDataAtualFormatada() {
               await API.cria({
                 titulo: nome,
                 autor,
+                responsavelId,
                 descricao,
                 src: process.env.SERVIDOR+`${availablePort}/`,
                 imagem: process.env.SERVIDOR+`${availablePort}/thumbnail.png`,
@@ -111,7 +113,6 @@ function obterDataAtualFormatada() {
       res.status(500).send("Erro ao processar o arquivo: " + error.message);
     }
   };
-  
 
 exports.index = async function name(req, res) {
     var mundos = await APIModel.lista();
@@ -121,4 +122,9 @@ exports.index = async function name(req, res) {
 exports.show = async function name(req, res) {
     var mundo = await APIModel.consulta(req.params._id);
     res.json(mundo);
+}
+
+exports.getMundos = async function name(req, res) {
+  var mundos = await APIModel.getMundos(req.params._id);
+  res.json(mundos);
 }

@@ -14,6 +14,18 @@ exports.cria = async function (req, res) {
     }
 }
 
+exports.liberado = async function(req,res) {
+  var email = req.params.email;
+  var liberado = await API.liberado(email);
+  var mensagem = "";
+  if(!liberado) {
+    mensagem = "E-mail já utilizado por outro usuário."
+    res.json({liberado, mensagem});
+  }else {
+    res.json({liberado});
+  }
+}
+
 exports.login = async function (req, res) {
   const { email, senha, manter } = req.body;
   const user = await API.login(email, senha);

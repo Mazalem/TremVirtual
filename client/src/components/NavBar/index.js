@@ -274,11 +274,6 @@ function NavBar() {
                 <i className="bi bi-shop"></i> Loja de Avatar
               </NavLink>
             </NavItem>
-            <NavItem className="nav-item">
-              <NavLink className="nav-link" href="/nota/cria_teste">
-                <i className="bi bi-box-arrow-in-right"></i> Registre-se ou Logue
-              </NavLink>
-            </NavItem>
 
             <OffCanvasTrigger
               className="nav-link"

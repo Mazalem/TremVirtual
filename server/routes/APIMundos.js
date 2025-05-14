@@ -7,6 +7,7 @@ const upload = multer({ dest: "uploads/" });
 router.get('/', (req, res) => {res.json({ message: 'API está funcionando!' });});
 router.post("/", upload.single("jogoZip"), APIMundosController.cria);
 router.get('/lista', APIMundosController.index);
+router.get('/lista/:_id', APIMundosController.getMundos);
 router.get('/consulta/:_id', APIMundosController.show);
 
 module.exports = router;

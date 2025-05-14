@@ -214,6 +214,10 @@ function FormularioInsercao() {
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
   const [mensagem, setMensagem] = useState("");
+  const [liberado, setLiberado] = useState(false);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [logado, setLogado] = useState([]);
   const [tipo, setTipo] = useState('Professor');
@@ -226,63 +230,84 @@ function FormularioInsercao() {
     setShowPassword(prev => !prev);
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setSuccess(false);
-  
-    const formData = new FormData(event.target);
-  
+  useEffect(() => {
+  fetch('/apiusers/verificarLogin', { credentials: 'include' })
+    .then(res => res.json())
+    .then(json => {
+      setLogado(json.user);
+      setTipo(json.user.tipo);
+      setNome(json.user.nome);
+      setEmail(json.user.email);
+      setSenha(json.user.senha);
+    })
+    .catch(() => {
+      fetch('/apiusers/logout', { credentials: 'include' });
+    });
+}, []);
+
+  const handleSubmit = async (event) => {
+  event.preventDefault();
+  setLoading(true);
+  setSuccess(false);
+
+  try {
+    if (email !== logado.email) {
+      const res = await fetch('/apiusers/liberado/' + email, { credentials: 'include' });
+      const json = await res.json();
+
+      if (!json.liberado) {
+        setFailure(true);
+        setMensagem(json.mensagem);
+        setTimeout(() => {
+          setFailure(false);
+          setMensagem("");
+        }, 1000);
+        setLoading(false);
+        return;
+      }
+    }
+
     const data = {
-      nome: formData.get("nome"),
-      email: formData.get("email"),
-      senha: formData.get("senha"),
-      tipo: formData.get("tipo"),
+      nome,
+      email,
+      senha,
+      tipo
     };
-  
-    fetch("/apiusers", {
+
+    const res2 = await fetch("/apiusers", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        setLoading(false);
-        if (json.success) {
-          setSuccess(true);
-          setMensagem(json.mensagem);
-          setTimeout(() => {
-            setMensagem('');
-            window.location.href = "/perfilUsuario";
-          }, 2000);
-        } else {
-          setFailure(true);
-          setMensagem(json.mensagem);
-          setTimeout(() => {
-            setFailure(false);
-            setMensagem("");
-          }, 1000);
-        }
-      })
-      .catch((error) => {
-        window.location.href = "/perfilUsuario";
-        alert("Erro ao atualizar usuário.");
-      });
-  };  
+    });
 
-  useEffect(() => {
-    fetch('/apiusers/verificarLogin', { credentials: 'include' })
-      .then(res => res.json())
-      .then(json => {
-        setLogado(json.user);
-        setTipo(json.user.tipo);
-      })
-      .catch(() => {
-        fetch('/apiusers/logout', { credentials: 'include' });
-      });
-  }, []);
+    const json2 = await res2.json();
+
+    setLoading(false);
+
+    if (json2.success) {
+      setSuccess(true);
+      setMensagem(json2.mensagem);
+      setTimeout(() => {
+        setMensagem('');
+        window.location.href = "/perfilUsuario";
+      }, 2000);
+    } else {
+      setFailure(true);
+      setMensagem(json2.mensagem);
+      setTimeout(() => {
+        setFailure(false);
+        setMensagem("");
+      }, 1000);
+    }
+
+  } catch (error) {
+    setLoading(false);
+    alert("Erro ao atualizar usuário.");
+    window.location.href = "/perfilUsuario";
+  }
+};
 
   return (
     <>
@@ -293,18 +318,42 @@ function FormularioInsercao() {
 
           <div>
             <label htmlFor="nome" className="form-label">Nome do Usuário</label>
-            <FormControl name="nome" type="text" id="nome" placeholder="Digite o nome do Usuário" value={logado.nome || ''} required/>
+            <FormControl
+              name="nome"
+              type="text"
+              id="nome"
+              placeholder="Digite o nome do Usuário"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required
+            />
           </div>
 
           <div>
             <label htmlFor="email" className="form-label">Email</label>
-            <FormControl  name="email" type="email" id="email" placeholder="Digite o email do Usuário" value={logado.email || ''} required/>
+            <FormControl
+              name="email"
+              type="email"
+              id="email"
+              placeholder="Digite o email do Usuário"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
 
           <div>
             <label htmlFor="senha" className="form-label">Senha</label>
             <div style={{ display: "flex" }}>
-              <FormControl name="senha" type={showPassword ? "text" : "password"} id="senha" placeholder="Digite a senha" value={logado.senha || ""} required />
+              <FormControl
+                name="senha"
+                type={showPassword ? "text" : "password"}
+                id="senha"
+                placeholder="Digite a senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+              />
               <Botao style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePassword} >
                 <span id="icone"> <i className={`bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
               </Botao>

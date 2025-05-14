@@ -40,6 +40,13 @@ class APIModel {
     return mundo;
   }
 
+  async getMundos(id) {
+  await conexao_bd();
+  const colecao = bd().collection("mundos_virtuais");
+  const mundos = await colecao.find({ responsavelId: id }).toArray();
+  return mundos;
+}
+
   async update(id, dadoAtualizado) {
     await conexao_bd();
     const colecao = bd().collection("mundos_virtuais");
