@@ -27,12 +27,13 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"            
+      - "80:80"
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./client/build:/usr/share/nginx/html:ro
     depends_on: [backend, frontend]
     networks: [app-network]
+
 
 networks:
   app-network:
