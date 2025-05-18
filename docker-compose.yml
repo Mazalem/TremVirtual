@@ -26,6 +26,18 @@ services:
     networks:
       - app-network
 
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d       
+      - ./client/build:/usr/share/nginx/html   
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
 networks:
   app-network:
     driver: bridge
