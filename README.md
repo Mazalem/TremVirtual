@@ -35,7 +35,7 @@ npx create-react-app client
 > ' y ' para aceitar a instalação
 ```
 cd client
-npm install react-dom react-router-dom react-scripts bootstrap bootstrap-icons styled-components
+npm install react-dom react-router-dom react-scripts bootstrap bootstrap-icons styled-components axios
 ```
 > ⚠️ Ignore quaisquer *warnings* durante a instalação.
 
@@ -49,7 +49,7 @@ npm run build
 1. Baixe a pasta `server` e coloque no mesmo diretório da pasta `client`.
 2. No terminal, navegue até a pasta `server` e execute:
 ```
-npm install mongodb multer adm-zip express path fs child_process net express-session cors dotenv
+npm install mongodb multer adm-zip express path fs child_process net express-session cors dotenv
 ```
 3. Para iniciar o servidor:
 ```

@@ -21,8 +21,9 @@ app.use(session({
   }
 }));
 
+const allowed = [process.env.SERVIDOR_PORTA, 'http://localhost:3000'];
 app.use(cors({
-  origin: process.env.SERVIDOR_PORTA,
+  origin: (origin, cb) => cb(null, !origin || allowed.includes(origin)),
   credentials: true
 }));
 
