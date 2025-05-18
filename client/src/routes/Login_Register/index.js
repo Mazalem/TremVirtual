@@ -22,13 +22,27 @@ const slideOverlay = keyframes`
   }
 `;
 
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden; 
+  position: fixed;  
+  top: 0;
+  left: 0;
+`;
+
 const Container = styled.div`
-  margin-left:22%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: rgba(44, 37, 37, 0.42);
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  position: relative;
   overflow: hidden;
   width: 768px;
   max-width: 100%;
@@ -380,78 +394,80 @@ export default function Login() {
   }
 
   return (
-    <Container className={rightPanel ? 'right-panel-active' : ''}>
-      <SignUpContainer>
-        <Form onSubmit={handleRegisterSubmit}>
-          <Title>Registrar-se</Title><br/>
-          <FormControl type="text" placeholder="Digite seu Nome" name='nome' required />
-          <FormControl type="email" placeholder="Digite seu Email" name='email' required />
-          <div style={{ display: "flex", justifyContent: "center", maxWidth: 100 + "%" }}>
-              <FormControl style={{maxWidth: 69+"%"}} name="senha" type={showPasswordRegister ? "text" : "password"} id="senha" placeholder="Digite sua senha" required />
-              <Button style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePasswordRegister} >
-                <span id="icone"> <i className={`bi ${showPasswordRegister ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
-              </Button>
-          </div>
+    <Wrapper>
+      <Container className={rightPanel ? 'right-panel-active' : ''}>
+        <SignUpContainer>
+          <Form onSubmit={handleRegisterSubmit}>
+            <Title>Registrar-se</Title><br/>
+            <FormControl type="text" placeholder="Digite seu Nome" name='nome' required />
+            <FormControl type="email" placeholder="Digite seu Email" name='email' required />
+            <div style={{ display: "flex", justifyContent: "center", maxWidth: 100 + "%" }}>
+                <FormControl style={{maxWidth: 69+"%"}} name="senha" type={showPasswordRegister ? "text" : "password"} id="senha" placeholder="Digite sua senha" required />
+                <Button style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePasswordRegister} >
+                  <span id="icone"> <i className={`bi ${showPasswordRegister ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
+                </Button>
+            </div>
 
-          <label for="tipo">Você é:</label>
-          <RadioGroup>
-            <RadioLabel>
-              <RadioInput type='radio' id='professor' name='tipo' value="Professor" required/> Professor    |    
-              <RadioInput type='radio' id='aluno' name='tipo' value="Aluno" /> Aluno
-            </RadioLabel>
-          </RadioGroup><br/>
+            <label for="tipo">Você é:</label>
+            <RadioGroup>
+              <RadioLabel>
+                <RadioInput type='radio' id='professor' name='tipo' value="Professor" required/> Professor    |    
+                <RadioInput type='radio' id='aluno' name='tipo' value="Aluno" /> Aluno
+              </RadioLabel>
+            </RadioGroup><br/>
 
-          <Button type='Submit' style={{marginLeft: 35 + '%'}}>Registrar-se</Button>
-        </Form>
-      </SignUpContainer>
+            <Button type='Submit' style={{marginLeft: 35 + '%'}}>Registrar-se</Button>
+          </Form>
+        </SignUpContainer>
 
-      <SignInContainer>
-        <Form onSubmit={handleLoginSubmit}>
-          <Title>Login</Title><br/>
-          <FormControl type="email" placeholder="Digite seu Email" name='email' required />
-          <div style={{ display: "flex", justifyContent: "center", maxWidth: 100 + "%" }}>
-              <FormControl style={{maxWidth: 69+"%"}} name="senha" type={showPasswordLogin ? "text" : "password"} id="senha" placeholder="Digite sua senha" required />
-              <Button style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePasswordLogin} >
-                <span id="icone"> <i className={`bi ${showPasswordLogin ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
-              </Button>
-          </div>
-          <div style={{display:"flex", justifyContent: "center", alignItems:"center"}}><CheckButton name='manter' value={true}/> <label for="manter">Manter-me Conectado(a)</label></div><br/>
-          <Button type='Submit' style={{marginLeft: 40 + '%'}}>Login</Button>
-        </Form>
-      </SignInContainer>
+        <SignInContainer>
+          <Form onSubmit={handleLoginSubmit}>
+            <Title>Login</Title><br/>
+            <FormControl type="email" placeholder="Digite seu Email" name='email' required />
+            <div style={{ display: "flex", justifyContent: "center", maxWidth: 100 + "%" }}>
+                <FormControl style={{maxWidth: 69+"%"}} name="senha" type={showPasswordLogin ? "text" : "password"} id="senha" placeholder="Digite sua senha" required />
+                <Button style={{ maxWidth: "40px", maxHeight: "46px", marginLeft: "5px" }} type="button"  onClick={togglePasswordLogin} >
+                  <span id="icone"> <i className={`bi ${showPasswordLogin ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
+                </Button>
+            </div>
+            <div style={{display:"flex", justifyContent: "center", alignItems:"center"}}><CheckButton name='manter' value={true}/> <label for="manter">Manter-me Conectado(a)</label></div><br/>
+            <Button type='Submit' style={{marginLeft: 40 + '%'}}>Login</Button>
+          </Form>
+        </SignInContainer>
 
-      <OverlayContainer>
-        <Overlay>
-          <OverlayLeft>
-            <Title>Já possui conta?</Title>
-            <Text>Faça já o Login e divirta-se aprendendo!</Text>
-            <Button onClick={() => setRightPanel(false)}>Login</Button>
-          </OverlayLeft>
+        <OverlayContainer>
+          <Overlay>
+            <OverlayLeft>
+              <Title>Já possui conta?</Title>
+              <Text>Faça já o Login e divirta-se aprendendo!</Text>
+              <Button onClick={() => setRightPanel(false)}>Login</Button>
+            </OverlayLeft>
 
-          <OverlayRight>
-            <Title>Primeira Vez Aqui?</Title>
-            <Text>Registre-se agora e tenha acesso à nova era educacional!</Text>
-            <Button onClick={() => setRightPanel(true)}>Registrar-se</Button>
-          </OverlayRight>
-        </Overlay>
-      </OverlayContainer>
-
-      {(
-        <MessageOverlay
-          condicao={success}
-          sucesso={success}
-          mensagem={mensagem}
-        />
-      )}
+            <OverlayRight>
+              <Title>Primeira Vez Aqui?</Title>
+              <Text>Registre-se agora e tenha acesso à nova era educacional!</Text>
+              <Button onClick={() => setRightPanel(true)}>Registrar-se</Button>
+            </OverlayRight>
+          </Overlay>
+        </OverlayContainer>
 
         {(
           <MessageOverlay
-          condicao = {failure}
-          sucesso = {!failure}
-          mensagem = {mensagem}
+            condicao={success}
+            sucesso={success}
+            mensagem={mensagem}
           />
         )}
 
-    </Container>
+          {(
+            <MessageOverlay
+            condicao = {failure}
+            sucesso = {!failure}
+            mensagem = {mensagem}
+            />
+          )}
+
+      </Container>
+    </Wrapper>
   );
 }
