@@ -1,12 +1,12 @@
-version: "3"
+version: '3.8'          
 
 services:
   frontend:
     build:
       context: ./client
     env_file: ./client/.env.production
-    expose:
-      - "80"
+    ports:
+      - "80:80"
     networks:
       - app-network
 
@@ -14,22 +14,19 @@ services:
     build:
       context: ./server
     env_file: ./server/.env.production
-    ports:                
-      - "3001:3001"
     networks:
       - app-network
     depends_on:
       - mongo
 
   mongo:
-  image: mongo
-  ports:
-    - "27017:27017"
-  volumes:
-    - ./mongo-data:/data/db
-  networks:
-    - app-network
-
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db        
+    networks:
+      - app-network
 
 networks:
   app-network:
