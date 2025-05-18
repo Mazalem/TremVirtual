@@ -5,8 +5,8 @@ services:
     build:
       context: ./client
     env_file: ./client/.env.production
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     networks:
       - app-network
 
