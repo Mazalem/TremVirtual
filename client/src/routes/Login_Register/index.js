@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import MessageOverlay from '../../components/MessageOverlay';
+const apiBase = process.env.REACT_APP_SERVIDOR || 'http://localhost:3001';
 
 const show = keyframes`
   0% {
@@ -351,7 +352,7 @@ export default function Login() {
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
 
-    fetch('/apiusers/', {
+    fetch(`${apiBase}/apiusers/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
