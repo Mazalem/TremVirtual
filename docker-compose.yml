@@ -4,7 +4,9 @@ services:
   frontend:
     build:
       context: ./client
-    env_file: ./client/.env.production
+      args:
+        REACT_APP_SERVIDOR: http://92.113.34.107:3001
+        REACT_APP_BASE: http://92.113.34.107
     networks: [app-network]
 
   backend:
