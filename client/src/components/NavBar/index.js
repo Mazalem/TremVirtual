@@ -259,21 +259,6 @@ function NavBar() {
                 <i className="bi bi-info-square"></i> Sobre
               </NavLink>
             </NavItem>
-            <NavItem className="nav-item">
-              <NavLink className="nav-link" href="/api">
-                <i className="bi bi-pencil-square"></i> Criadores
-              </NavLink>
-            </NavItem>
-            <NavItem className="nav-item">
-              <NavLink className="nav-link" href="/nota/cria_teste">
-                <i className="bi bi-bag"></i> Planos
-              </NavLink>
-            </NavItem>
-            <NavItem className="nav-item">
-              <NavLink className="nav-link" href="/nota/cria_teste">
-                <i className="bi bi-shop"></i> Loja de Avatar
-              </NavLink>
-            </NavItem>
 
             <OffCanvasTrigger
               className="nav-link"

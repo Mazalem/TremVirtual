@@ -138,7 +138,7 @@ function Jogo({jogo}) {
       onClick={handleToggleDescricao}
       show={showDescricao}
     >
-      <JogoImagem src={jogo.imagem} alt={jogo.titulo} />
+      <JogoImagem src={jogo.imagem} alt={jogo.titulo} /> 
       <JogoInfo>
         <h4>{jogo.titulo}</h4>
         <p>{jogo.autor}</p>
