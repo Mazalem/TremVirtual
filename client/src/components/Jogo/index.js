@@ -146,7 +146,7 @@ function Jogo({jogo}) {
       </JogoInfo>
       <JogoDescricao show={showDescricao}>
         <p>{jogo.descricao}</p>
-        <a href={`http://localhost:3000/jogo/${jogo._id}`}><BotaoJogar show={showDescricao}>Jogar</BotaoJogar></a>
+        <a href={`${process.env.REACT_APP_BASE}/jogo/${jogo._id}`}><BotaoJogar show={showDescricao}>Jogar</BotaoJogar></a>
       </JogoDescricao>
     </JogoContainer>
   );

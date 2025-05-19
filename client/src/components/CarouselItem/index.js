@@ -57,7 +57,7 @@ const CarouselGradient = styled.div`
 `;
 
 function CarouselItem({jogo}) {
-  const url = process.env.REACT_APP_SERVIDOR;
+  const url = process.env.REACT_APP_BASE;
   return (
     <CarouselItemWrapper className="carousel-item active">
       <CarouselImage src={jogo.imagem} className="d-block w-100" alt={jogo.legenda} />

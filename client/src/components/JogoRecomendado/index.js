@@ -52,7 +52,7 @@ const JogoRecomendadoLikes = styled.p`
 
 const JogoRecomendado = (props) => {
   const jogo = props.jogo;
-  const url = process.env.REACT_APP_SERVIDOR;
+  const url = process.env.REACT_APP_BASE;
   return (
     <a href={`${url}/jogo/${jogo._id}`}>
     <JogoRecomendadoContainer>
