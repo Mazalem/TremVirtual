@@ -4,15 +4,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
-
-COPY . .
-
 ARG REACT_APP_SERVIDOR
 ARG REACT_APP_BASE
 
 ENV REACT_APP_SERVIDOR=$REACT_APP_SERVIDOR
 ENV REACT_APP_BASE=$REACT_APP_BASE
+
+RUN npm install
+COPY . .
 
 RUN npm run build
 
