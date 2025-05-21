@@ -5,8 +5,12 @@ services:
     build:
       context: ./client
       args:
-        REACT_APP_SERVIDOR: http://92.113.34.107:3001
+        REACT_APP_SERVIDOR: http://backend:3001
         REACT_APP_BASE: http://92.113.34.107
+    volumes:
+      - ./client/build:/home/matheus/tremvirtual/client/build
+    working_dir: /app
+    command: sh -c "npm install && npm run build"
     depends_on:
       - backend
       - mongo
