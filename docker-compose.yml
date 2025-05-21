@@ -2,28 +2,28 @@ version: "3.8"
 
 services:
   frontend:
-  build:
-    context: ./client
-    args:
-      REACT_APP_SERVIDOR: http://92.113.34.107:3001
-      REACT_APP_BASE: http://92.113.34.107
-  ports:
-    - "80:80"
-  networks: [app-network]
+    build:
+      context: ./client
+      args:
+        REACT_APP_SERVIDOR: http://92.113.34.107:3001
+        REACT_APP_BASE: http://92.113.34.107
+    ports:
+      - "80:80"
+    networks: [app-network]
 
   backend:
     build:
       context: ./server
     env_file: ./server/.env.production
     environment:
-      - PORT=3001          
+      - PORT=3001
     depends_on: [mongo]
     networks: [app-network]
 
   mongo:
     image: mongo
     ports:
-      - "27017:27017"      
+      - "27017:27017"
     volumes:
       - ./mongo-data:/data/db
     networks: [app-network]
