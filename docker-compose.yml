@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   frontend:
@@ -9,6 +9,9 @@ services:
         REACT_APP_BASE: http://92.113.34.107
     ports:
       - "80:80"
+    depends_on:
+      - backend
+      - mongo
     networks: [app-network]
 
   backend:
@@ -17,7 +20,10 @@ services:
     env_file: ./server/.env.production
     environment:
       - PORT=3001
-    depends_on: [mongo]
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
     networks: [app-network]
 
   mongo:
