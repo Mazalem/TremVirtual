@@ -366,7 +366,7 @@ export default function Login() {
     const formData = new FormData(form);
     const jsonData = Object.fromEntries(formData.entries());
 
-    fetch(`${apiBase}/apiusers/`, {
+    fetch('/apiusers/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
