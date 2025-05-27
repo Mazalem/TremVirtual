@@ -40,6 +40,8 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 app.use('/apimundos', APIMundos); 
 app.use('/apiusers', APIUsers); 
 
+app.use('/projects', express.static(path.join(__dirname, 'projects')));
+
 app.use((req, res, next) => {
   if (!req.path.startsWith('/apimundos') && !req.path.startsWith('/apiusers')) {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
