@@ -31,7 +31,9 @@ function obterDataAtualFormatada() {
   const extractPath = path.join(__dirname, "..", "public", "projects", projectName);
 
   try {
+    console.log(">> Criando pasta em:", extractPath);
     fs.mkdirSync(extractPath, { recursive: true });
+    console.log(">> Pasta criada com sucesso:", extractPath);
     const zip = new AdmZip(zipPath);
     zip.extractAllTo(extractPath, true);
 
