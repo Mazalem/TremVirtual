@@ -34,8 +34,8 @@ app.use(logger('dev'));
 app.use(express.json({limit:'1024mb'}));
 app.use(express.urlencoded({ extended: false, limit:'1024mb' }));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/projects', express.static(path.join(__dirname, 'public', 'projects'))); 
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../client/build')));
 

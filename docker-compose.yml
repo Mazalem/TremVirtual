@@ -14,7 +14,7 @@ services:
       - mongo
     networks: [app-network]
 
-    backend:
+  backend:
     build:
       context: ./server
     env_file: ./server/.env.production
@@ -24,6 +24,7 @@ services:
       - "3001:3001"
     volumes:
       - ./server/public/projects:/app/public/projects
+      - ./server/uploads:/app/uploads
     depends_on:
       - mongo
     networks: [app-network]
