@@ -83,7 +83,7 @@ function Layout({ children }) {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const rotaValida = /^\/(home|jogo\/[^\/?#]+|adicionarMundo|perfilUsuario|editarUsuario)(\/)?([?#].*)?$/.test(pathname);
+  const rotaValida = /^\/(home|jogo\/[^\/?#]+|adicionarMundo|perfilUsuario|editarUsuario|projects\/[^\/?#]+)(\/)?([?#].*)?$/.test(pathname);
 
   const mostrarNavFooter = rotaValida;
   const removerMargem = !rotaValida && pathname !== '/';
