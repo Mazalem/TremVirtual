@@ -5,8 +5,6 @@ services:
       args:
         REACT_APP_SERVIDOR: http://backend:3001
         REACT_APP_BASE: http://92.113.34.107
-    ports:
-      - "3000:80"
     depends_on:
       - backend
       - mongo
