@@ -22,7 +22,7 @@ app.use(session({
 }));
 
 const allowed = [
-  process.env.SERVIDOR_PORTA, 
+  process.env.SERVIDOR_PORTA,
   'http://localhost:3000',
   'http://92.113.34.107'
 ];
@@ -31,15 +31,12 @@ app.use(cors({
   credentials: true
 }));
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
 app.use(logger('dev'));
 app.use(express.json({limit:'1024mb'}));
 app.use(express.urlencoded({ extended: false, limit:'1024mb' }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/projects', express.static(path.join(__dirname, 'public', 'projects'))); 
+app.use('/projects', express.static(path.join(__dirname, 'public', 'projects')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../client/build')));
 
@@ -47,7 +44,7 @@ app.use('/apimundos', APIMundos);
 app.use('/apiusers', APIUsers);
 
 app.use((req, res, next) => {
-  if (!req.path.startsWith('/apimundos') && !req.path.startsWith('/apiusers')) {
+  if (!req.path.startsWith('/apimundos') && !req.path.startsWith('/apiusers') && !req.path.startsWith('/projects') && !req.path.startsWith('/uploads')) {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
   } else {
     next();
@@ -59,10 +56,12 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
-  res.render('error');
+  res.json({
+    status: err.status,
+    message: err.message,
+    error: req.app.get('env') === 'development' ? err : {}
+  });
 });
 
 app.listen(3001, () => {
