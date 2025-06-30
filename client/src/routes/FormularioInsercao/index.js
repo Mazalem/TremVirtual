@@ -183,27 +183,38 @@ function FormularioInsercao() {
     setSuccess(false);
 
     const formData = new FormData(event.target);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
     fetch("/apimundos", {
       method: "POST",
       body: formData,
-      credentials: "include"
+      credentials: "include",
+      signal: controller.signal
     })
-    .then((response) => response.json())
+    .then((response) => {
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        return response.json().then(errData => { throw new Error(errData.erro || 'Erro desconhecido do servidor'); });
+      }
+      return response.json();
+    })
     .then((data) => {
       setLoading(false);
       setTimeout(() => {
         setSuccess(true);
       }, 100);
-      setTimeout(() => {
-        window.location.href = "/home";
-      }, 2000);
     })
     .catch((error) => {
-      console.error("Erro ao enviar o arquivo:", error);
       setLoading(false);
+      if (error.name === 'AbortError') {
+        console.error("Erro ao enviar o arquivo: Requisição excedeu o tempo limite (Timeout).");
+      } else {
+        console.error("Erro ao enviar o arquivo:", error.message || error);
+      }
     });
   };
+
 
   return (
     <>
