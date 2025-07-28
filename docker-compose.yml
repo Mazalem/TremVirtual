@@ -33,6 +33,13 @@ services:
       - ./mongo-data:/data/db
     networks: [app-network]
 
+  meu-mundo-aframe:
+    image: museu_virtual_manhuacu                                      # Não use se já buildou manualmente.
+    ports:
+      - "8080:80"
+    networks: [app-network]
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
