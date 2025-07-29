@@ -36,12 +36,12 @@ services:
 
   museu_virtual_manhuacu:
     build:
-      context: ./museu_virtual_manhuacu
+      context: ./server/public/projects/project_museuvirtual_tremvirtual_1753663884349
     ports:
       - "8080:8080"
     networks: [app-network]
     restart: unless-stopped
-
+    
 networks:
   app-network:
     driver: bridge
