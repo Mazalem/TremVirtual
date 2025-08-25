@@ -1,5 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import Botao from '../BotaoInfoJogo'
+import {useParams} from "react-router-dom";
+import { useEffect, useState } from 'react';
 
 const Container = styled.div`
   color: white;
@@ -68,17 +71,70 @@ const ReleaseDate = styled.div`
 `;
 
 function InfoJogo(props) {
+  const { index: mundoId } = useParams();
+  const [userId, setUserId] = useState(null);
+  const [liked, setLiked] = useState(false); 
+  const [likes, setLikes] = useState(props.likes); 
+
+ useEffect(() => {
+  fetch('/apiusers/verificarLogin', { credentials: 'include' })
+    .then(res => res.json())
+    .then(json => {
+      if (json.user) {
+        setUserId(json.user.id);
+        fetch(`/apimundos/${mundoId}/isLiked?userId=${json.user.id}`)
+          .then(res => res.json())
+          .then(data => {
+            setLiked(data.liked);
+            setLikes(data.likes);
+          });
+      } else {
+        fetch(`/apimundos/consulta/${mundoId}`)
+          .then(res => res.json())
+          .then(mundo => setLikes(mundo.likes));
+      }
+    })
+    .catch(() => {});
+}, [mundoId]);
+
+  const handleLike = async () => {
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`/apimundos/${mundoId}/like`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+
+      const data = await response.json();
+      setLiked(data.liked);
+      setLikes(data.likes);
+    } catch (error) {
+      console.error("Erro ao curtir/descurtir:", error);
+    }
+  };
+
   return (
     <Container>
       <TopSection>
         <Left>
-          <Title>{props.titulo}  <a style={{color: 'rgba(255, 255, 255, 0.15)', marginLeft: '5px'}}>#{props.id}</a></Title>
-          <Info>{props.autor} | ⌨︎ {props.reproducoes} | ❤ {props.likes}</Info>
+          <Title>
+            {props.titulo}
+            <a style={{color: 'rgba(255, 255, 255, 0.15)', marginLeft: '5px'}}>#{props.id}</a>
+          </Title>
+          <Info>{props.autor} | ⌨︎ {props.reproducoes} | ❤ {likes}</Info>
         </Left>
         <Right>
-          <Button><i className="bi bi-heart"></i></Button>
-          <Button><i className="bi bi-share"></i></Button>
-          <Button><i className="bi bi-gear"></i></Button>
+          <Botao 
+            unclicked="bi bi-heart"
+            clicked="bi bi-heart-fill"
+            change={true}
+            isActive={liked}
+            onClick={handleLike}
+          />
+          <Botao unclicked="bi bi-share" clicked="bi bi-share" change={false}/>
+          <Botao unclicked="bi bi-gear" clicked="bi bi-gear" change={false}/>
         </Right>
       </TopSection>
       <Separator />

@@ -1,18 +1,32 @@
 const API = require("../model/APIUsersModel");
 
 exports.cria = async function (req, res) {
-    var email = req.body.email;
-    var liberado = await API.liberado(email);
-    if(liberado) {
-      var nome = req.body.nome;
-      var senha = req.body.senha;
-      var tipo = req.body.tipo;
-      await API.cria({nome: nome, email: email, senha: senha, tipo: tipo});
-      res.status(200).json({ sucesso: true, mensagem: "Usuário cadastrado com sucesso!" });
-    }else{
-      res.status(500).json({ sucesso:false, mensagem: "E-mail já cadastrado!" });
+    try {
+        var email = req.body.email;
+        var liberado = await API.liberado(email);
+
+        if (liberado) {
+            var nome = req.body.nome;
+            var senha = req.body.senha;
+            var tipo = req.body.tipo;
+
+            await API.cria({
+                nome: nome,
+                email: email,
+                senha: senha,
+                tipo: tipo,
+                likedMundos: []
+            });
+
+            res.status(200).json({ sucesso: true, mensagem: "Usuário cadastrado com sucesso!" });
+        } else {
+            res.status(500).json({ sucesso: false, mensagem: "E-mail já cadastrado!" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ sucesso: false, mensagem: "Erro ao criar usuário" });
     }
-}
+};
 
 exports.liberado = async function(req,res) {
   var email = req.params.email;

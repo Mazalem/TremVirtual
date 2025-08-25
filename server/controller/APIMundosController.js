@@ -1,8 +1,8 @@
 const API = require("../model/APIMundosModel");
+const APIModel = require("../model/APIMundosModel");
 const AdmZip = require("adm-zip");
 const path = require("path");
 const fs = require("fs");
-const APIModel = require("../model/APIMundosModel");
 require('dotenv').config();
 
 const uploadsDir = path.join(__dirname, '..', 'uploads');
@@ -80,3 +80,42 @@ exports.getMundos = async function (req, res) {
     var mundos = await APIModel.getMundos(req.params._id);
     res.json(mundos);
 };
+
+exports.toggleLike = async function (req, res) {
+  const { id } = req.params;
+  const { userId } = req.body;
+
+  if (!userId) return res.status(400).json({ error: "userId é obrigatório" });
+
+  try {
+    const resultado = await API.toggleLike(id, userId);
+    res.json(resultado);
+  } catch (error) {
+    console.error("Erro no toggleLike:", error);
+    res.status(500).json({ error: "Erro ao curtir/descurtir mundo" });
+  }
+};
+
+exports.isLiked = async function (req, res) {
+  const { id } = req.params;
+  const { userId } = req.query;
+
+  if (!userId) return res.status(400).json({ error: "userId é obrigatório" });
+
+  try {
+    const users = require("../model/APIUsersModel");
+    const usuario = await users.consulta(userId);
+
+    const mundos = require("../model/APIMundosModel");
+    const mundo = await mundos.consulta(id);
+
+    const jaCurtiu = usuario?.likedMundos?.includes(id);
+
+    res.json({ liked: jaCurtiu, likes: mundo.likes });
+  } catch (error) {
+    console.error("Erro no isLiked:", error);
+    res.status(500).json({ error: "Erro ao verificar curtida" });
+  }
+};
+
+

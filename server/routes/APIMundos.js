@@ -9,5 +9,7 @@ router.post("/", upload.single("jogoZip"), APIMundosController.cria);
 router.get('/lista', APIMundosController.index);
 router.get('/lista/:_id', APIMundosController.getMundos);
 router.get('/consulta/:_id', APIMundosController.show);
+router.post('/:id/like', APIMundosController.toggleLike);
+router.get('/:id/isLiked', APIMundosController.isLiked);
 
 module.exports = router;

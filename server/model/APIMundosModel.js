@@ -61,6 +61,50 @@ class APIModel {
     const colecao = bd().collection("mundos_virtuais");
     await colecao.deleteOne({ _id: new ObjectId(id) });
   }
+
+  async toggleLike(mundoId, userId) {
+    await conexao_bd();
+    const mundos = bd().collection("mundos_virtuais");
+    const users = bd().collection("users");
+
+    const mundoObjectId = new ObjectId(mundoId);
+    const userObjectId = new ObjectId(userId);
+
+    const mundoIdStr = mundoId.toString();
+
+    const usuario = await users.findOne({ _id: userObjectId });
+    const jaCurtiu = usuario?.likedMundos?.includes(mundoIdStr);
+
+    if (jaCurtiu) {
+      await users.updateOne(
+        { _id: userObjectId },
+        { $pull: { likedMundos: mundoIdStr } }
+      );
+
+      await mundos.updateOne(
+        { _id: mundoObjectId },
+        { $inc: { likes: -1 } }
+      );
+
+      const mundo = await mundos.findOne({ _id: mundoObjectId });
+      return { liked: false, likes: mundo.likes };
+
+    } else {
+      await users.updateOne(
+        { _id: userObjectId },
+        { $addToSet: { likedMundos: mundoIdStr } }
+      );
+
+      await mundos.updateOne(
+        { _id: mundoObjectId },
+        { $inc: { likes: 1 } }
+      );
+
+      const mundo = await mundos.findOne({ _id: mundoObjectId });
+      return { liked: true, likes: mundo.likes };
+    }
+}
+
 }
 
 module.exports = new APIModel();
