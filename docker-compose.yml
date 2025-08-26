@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   frontend:
     build:
@@ -9,6 +11,8 @@ services:
       - backend
       - mongo
     networks: [app-network]
+    ports:
+      - "80:80"
 
   backend:
     build:
@@ -21,6 +25,7 @@ services:
     volumes:
       - ./server/public/projects:/app/public/projects
       - ./server/uploads:/app/uploads
+      - ./client/build:/client/build
     depends_on:
       - mongo
     networks: [app-network]
@@ -41,7 +46,7 @@ services:
       - "8080:8080"
     networks: [app-network]
     restart: unless-stopped
-    
+
 networks:
   app-network:
     driver: bridge
