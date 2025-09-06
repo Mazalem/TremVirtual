@@ -11,8 +11,6 @@ services:
       - backend
       - mongo
     networks: [app-network]
-    ports:
-      - "80:80"
 
   backend:
     build:
