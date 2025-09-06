@@ -27,6 +27,7 @@ exports.cria = async function (req, res) {
     var autor = req.body.autor;
     var descricao = req.body.descricao;
     var responsavelId = req.body.responsavelId;
+    var visibilidade = req.body.visibilidade;
     const zipPath = req.file.path;
 
     const projectName = "project_" + nome.replace(/\s+/g, '').toLowerCase() + "_" + autor.replace(/\s+/g, '').toLowerCase() + "_" + Date.now();
@@ -49,6 +50,7 @@ exports.cria = async function (req, res) {
             titulo: nome,
             autor,
             responsavelId,
+            visibilidade,
             descricao,
             src: `${process.env.SERVIDOR}/projects/${projectName}/${projectFolder}/`,
             imagem: `${process.env.SERVIDOR}/projects/${projectName}/${projectFolder}/thumbnail.png`,
@@ -76,9 +78,34 @@ exports.show = async function (req, res) {
     res.json(mundo);
 };
 
-exports.getMundos = async function (req, res) {
-    var mundos = await APIModel.getMundos(req.params._id);
-    res.json(mundos);
+exports.listaFiltrada = async function (req, res) {
+  const { tipo, id, pag } = req.params;
+  let mundos = [];
+
+  try {
+    if (tipo === "criados") {
+      mundos = await APIModel.mundosPorUsuario(id);
+    } else if (tipo === "favoritos") {
+      mundos = await APIModel.mundosFavoritos(id);
+    } else if (tipo === "todos") {
+      const q = req.query.q;
+      mundos = await APIModel.buscarPublicosPorTitulo(q);
+    }
+
+    const page = parseInt(pag) || 1;
+    const limit = 30;
+    const totalPaginas = Math.ceil(mundos.length / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    res.json({
+      dados: mundos.slice(startIndex, endIndex),
+      totalPaginas
+    });
+  } catch (err) {
+    console.error("Erro em listaFiltrada:", err);
+    res.status(500).json({ error: "Erro ao buscar mundos" });
+  }
 };
 
 exports.toggleLike = async function (req, res) {

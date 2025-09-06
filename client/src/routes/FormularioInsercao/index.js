@@ -163,6 +163,52 @@ const SuccessOverlay = styled.div`
   }
 `;
 
+const RadioGroup = styled.div`
+  display: flex;
+  gap: 35%;
+  margin-top: 10px;
+  align-items:center;
+  justify-content: center;
+`;
+
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const RadioInput = styled.input`
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  background-color: transparent;
+
+  &:checked {
+    background-color: #ff6347;
+    border-color: #ff6347;
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+  }
+`;
+
 function FormularioInsercao() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -215,7 +261,6 @@ function FormularioInsercao() {
     });
   };
 
-
   return (
     <>
       <GlobalStyle />
@@ -246,8 +291,23 @@ function FormularioInsercao() {
           <input type="hidden" name="responsavelId" value={usuario.id}/>
 
           <div>
+            <label className="form-label">Visibilidade</label>
+            <RadioGroup>
+              <RadioLabel>
+                <RadioInput type="radio" name="visibilidade" value="publico" defaultChecked />
+                Público
+              </RadioLabel>
+              <RadioLabel>
+                <RadioInput type="radio" name="visibilidade" value="privado" />
+                Privado
+              </RadioLabel>
+            </RadioGroup>
+          </div>
+          <br/>
+          <div>
             <Botao type="submit">Adicionar Jogo</Botao>
           </div>
+
         </form>
 
         {loading && (

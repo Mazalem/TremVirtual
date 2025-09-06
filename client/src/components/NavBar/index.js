@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import AreaUsuarioOffCanvas from '../AreaUsuarioOffCanvas';
+import SearchForm from '../SearchForm';
+import { useNavigate } from "react-router-dom";
 
 const Navbar = styled.nav`
   background-color: #2c2525d7;
@@ -15,7 +17,7 @@ const Navbar = styled.nav`
 const ContainerFluid = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
 `;
 
@@ -69,6 +71,7 @@ const NavbarNav = styled.ul`
 const NavItem = styled.li`
   list-style: none;
   margin: 0;
+  margin-right: 10px;
 `;
 
 const NavLink = styled.a`
@@ -79,11 +82,11 @@ const NavLink = styled.a`
   transition: color 0.3s ease, border 0.3s ease;
   border: 1px solid transparent;
   border-radius: 10px;
+  border: 1px solid #fff;
 
   &:hover {
     background-color: #463b3b6e;
     color: #ff6347;
-    border: 1px solid #fff;
     cursor: pointer;
   }
 
@@ -219,9 +222,13 @@ const NavbarControls = styled.div`
     align-items: center;
     justify-content: center;
   }
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
 `;
 
 function NavBar() {
+  const navigate = useNavigate();
   const toggleMenu = () => {
     const nav = document.getElementById('navbarNav');
     nav.classList.toggle('active');
@@ -237,6 +244,10 @@ function NavBar() {
       .catch(err => console.error('Erro ao carregar o usuário', err));
   }, []);
 
+  const handleSearch = (query) => {
+    navigate(`/galeria/todos/1?q=${query}`);
+  }
+
   return (
     <div>
       <Navbar className="navbar navbar-expand-lg navbar-dark">
@@ -248,15 +259,11 @@ function NavBar() {
           <ToggleButton onClick={toggleMenu}>
             <i className="bi bi-list"></i>
           </ToggleButton>
-          <NavbarNav id="navbarNav">
+          <NavbarControls>
+            <NavbarNav id="navbarNav">
             <NavItem className="nav-item">
               <NavLink className="nav-link" href="/home">
                 <i className="bi bi-house-door-fill"></i> Home
-              </NavLink>
-            </NavItem>
-            <NavItem className="nav-item">
-              <NavLink className="nav-link" href="/home/#sobre">
-                <i className="bi bi-info-square"></i> Sobre
               </NavLink>
             </NavItem>
 
@@ -267,19 +274,14 @@ function NavBar() {
               aria-controls="offcanvasUsuario"
             >
             <NavItem className="nav-item">
-              <NavLink className="nav-link" href="/nota/cria_teste">
+              <NavLink className="nav-link">
               <i className="bi bi-person-circle"></i> {usuario}
               </NavLink>
             </NavItem>
             </OffCanvasTrigger>
           </NavbarNav>
-          <NavbarControls>
-            <NavbarForm className="navbar-form" method="POST" action="/search">
-              <FormControl type="text" className="form-control" placeholder="Pesquisar..." name="query" />
-              <BtnSubmit type="submit" className="btn-submit">
-                <i className="bi bi-search"></i>
-              </BtnSubmit>
-            </NavbarForm>
+
+            <SearchForm placeholder="Pesquisar..." onSubmit={handleSearch}/>
           </NavbarControls>
         </ContainerFluid>
       </Navbar>

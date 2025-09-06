@@ -135,14 +135,6 @@ function AreaUsuarioOffCanvas() {
           </a>
           </AreaRestrita>
 
-          <OptionItem>
-            <i className="bi bi-chat-dots-fill"/> Chats
-          </OptionItem>
-
-          <OptionItem>
-            <i className="bi bi-sliders"/> Configurações
-          </OptionItem>
-
           <OptionItem className="logout" onClick={handleLogout}>
             <i className="bi bi-box-arrow-right"></i> Log Out
           </OptionItem>

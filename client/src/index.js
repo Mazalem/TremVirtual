@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import TelaPrincipal from './routes/TelaPrincipal';
 import TelaJogo from './routes/TelaJogo';
+import GaleriaDeMundos from './routes/GaleriaDeMundos';
 import FormularioInsercao from './routes/FormularioInsercao';
 import AreaUsuario from './routes/AreaUsuario';
 import EditUser from './routes/EditUser';
@@ -83,7 +84,7 @@ function Layout({ children }) {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const rotaValida = /^\/(home|jogo\/[^\/?#]+|adicionarMundo|perfilUsuario|editarUsuario|projects\/[^\/?#]+)(\/)?([?#].*)?$/.test(pathname);
+  const rotaValida = /^\/(home|jogo\/[^\/?#]+|adicionarMundo|perfilUsuario|editarUsuario|galeria\/[^\/?#]+\/[^\/?#]+|projects\/[^\/?#]+)(\/)?([?#].*)?$/.test(pathname);
 
   const mostrarNavFooter = rotaValida;
   const removerMargem = !rotaValida && pathname !== '/';
@@ -174,6 +175,7 @@ function AppRoutes() {
         <Route path="/adicionarMundo" element={<RotaPrivada><RotaProfessor><FormularioInsercao/></RotaProfessor></RotaPrivada>} />
         <Route path="/perfilUsuario" element={<RotaPrivada><AreaUsuario/></RotaPrivada>} />
         <Route path="/editarUsuario" element={<RotaPrivada><EditUser/></RotaPrivada>} />
+        <Route path="/galeria/:tipo/:pag" element={<RotaPrivada><GaleriaDeMundos/></RotaPrivada>} />
         <Route path="*" element={<Erro codigo="404" texto="Página não encontrada."/>} />
       </Routes>
     </Layout>

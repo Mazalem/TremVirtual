@@ -40,12 +40,37 @@ class APIModel {
     return mundo;
   }
 
-  async getMundos(id) {
+  async mundosPorUsuario(id) {
   await conexao_bd();
   const colecao = bd().collection("mundos_virtuais");
-  const mundos = await colecao.find({ responsavelId: id }).toArray();
-  return mundos;
+  return colecao.find({ responsavelId: id }).toArray();
 }
+
+  async mundosFavoritos(userId) {
+    await conexao_bd();
+    const users = bd().collection("users");
+    const usuario = await users.findOne({ _id: new ObjectId(userId) });
+    if (!usuario?.likedMundos || usuario.likedMundos.length === 0) return [];
+
+    const mundos = bd().collection("mundos_virtuais");
+    return mundos.find({ _id: { $in: usuario.likedMundos.map(id => new ObjectId(id)) } }).toArray();
+  }
+
+  async buscarPublicosPorTitulo(query) {
+    await conexao_bd();
+    const colecao = bd().collection("mundos_virtuais");
+
+    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(escapeRegex(query), "i");
+
+    return colecao
+      .find({
+        visibilidade: "publico",
+        titulo: { $regex: regex }
+      })
+      .sort({ titulo: 1 })
+      .toArray();
+  }
 
   async update(id, dadoAtualizado) {
     await conexao_bd();

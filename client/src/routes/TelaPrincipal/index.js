@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Carousel from '../../components/Carousel';
-import GaleriaDeJogos from '../../components/GaleriaDeJogos';
-import Nota from '../../components/Nota';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Carousel from "../../components/Carousel";
+import GaleriaDeJogos from "../../components/GaleriaDeJogos";
+import Nota from "../../components/Nota";
 
 const TelaPrincipalContainer = styled.div`
   margin-top: 5%;
@@ -14,12 +14,23 @@ const ContentWrapper = styled.div`
 `;
 
 function TelaPrincipal(props) {
+  const [todosJogos, setTodosJogos] = useState([]);
+
+  useEffect(() => {
+    fetch("/apimundos/lista/todos/0/1?q=")
+      .then((res) => res.json())
+      .then((json) => {
+        setTodosJogos(json.dados.slice(0, 15));
+      })
+      .catch((err) => console.error("Erro ao buscar mundos:", err));
+  }, []);
+
   return (
     <TelaPrincipalContainer>
       <ContentWrapper className="container">
         <div className="row">
           <div className="col-12">
-            <Carousel jogos={props.jogos} inicio={0} fim={3}/>
+            <Carousel jogos={props.jogos} inicio={0} fim={3} />
           </div>
         </div>
         <div className="row">
@@ -29,12 +40,12 @@ function TelaPrincipal(props) {
         </div>
         <div className="row">
           <div className="col-12">
-            <GaleriaDeJogos titulo={"Trivia >"} jogos={props.jogos} inicio={5} fim={10}/>
+            <GaleriaDeJogos titulo={"Trivia >"} jogos={props.jogos} inicio={5} fim={10} />
           </div>
         </div>
         <div className="row">
           <div className="col-12">
-            <GaleriaDeJogos titulo={"Todos >"} jogos={props.jogos}/>
+            <GaleriaDeJogos titulo={"Todos >"} jogos={todosJogos} />
           </div>
         </div>
         <div className="row" id="sobre">

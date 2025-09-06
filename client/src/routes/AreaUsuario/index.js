@@ -178,10 +178,10 @@ const Perfil = () => {
   
   useEffect(() => {
     if (usuario && usuario.id) {
-      fetch('/apimundos/lista/' + usuario.id)
+      fetch('/apimundos/lista/criados/' + usuario.id + '/1')
         .then(res => res.json())
         .then(json => {
-          const ultimos6 = json.slice(-6).reverse();
+          const ultimos6 = json.dados.slice(-6).reverse();
           setMundos(ultimos6);
         })
         .catch(() => {});
@@ -193,7 +193,7 @@ const Perfil = () => {
       <GlobalStyle />
       <Wrapper>
         <ProfileSection>
-          <Avatar style={{ backgroundImage: `url('CAMINHO_DA_IMAGEM')` }} />
+          <Avatar style={{ backgroundImage: `url('https://icones.pro/wp-content/uploads/2021/02/icone-utilisateur.png')` }} />
           <Name>{usuario?.nome}</Name>
           <a href="/editarUsuario"><EditButton>Editar perfil</EditButton></a>
         </ProfileSection>
@@ -219,7 +219,7 @@ const Perfil = () => {
           </WorldsContainer>
 
           <Footer>
-            <ViewMore href="/meus-mundos">Ver Mais</ViewMore>
+            <ViewMore href="/galeria/criados/1">Ver Mais</ViewMore>
           </Footer>
         </WorldsSection>
       </Wrapper>
