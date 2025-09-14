@@ -21,7 +21,7 @@ const SearchWrapper = styled.div`
 
 const GaleriaWrapper = styled.div`
   width: 100%;
-  max-width: 1200px;
+  max-width: 1110px;
   align-items: center;
 `;
 

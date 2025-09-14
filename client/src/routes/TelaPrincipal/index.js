@@ -20,7 +20,7 @@ function TelaPrincipal(props) {
     fetch("/apimundos/lista/todos/0")
       .then((res) => res.json())
       .then((json) => {
-        setTodosJogos(json.mundos.slice(0, 9));
+        setTodosJogos(json.mundos.slice(0, 10));
       })
       .catch((err) => console.error("Erro ao buscar mundos:", err));
   }, []);
@@ -45,7 +45,7 @@ function TelaPrincipal(props) {
         </div>
         <div className="row">
           <div className="col-12">
-            <GaleriaDeJogos inicio={0} fim={9} titulo={"Todos >"} jogos={todosJogos} link={"/galeria/todos/1"}/>
+            <GaleriaDeJogos inicio={0} fim={10} titulo={"Todos >"} jogos={todosJogos} link={"/galeria/todos/1"}/>
           </div>
         </div>
         <div className="row" id="sobre">

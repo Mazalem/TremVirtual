@@ -376,6 +376,7 @@ function FormularioInsercao() {
               name="descricao"
               id="descricao"
               rows="3"
+              maxlength="80"
               placeholder="Digite a descrição do jogo"
               defaultValue={mundo?.descricao || ""}
               required

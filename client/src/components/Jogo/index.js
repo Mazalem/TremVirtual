@@ -15,6 +15,7 @@ const JogoContainer = styled.div`
   flex: 1 1 auto;
   transform: ${(props) => (props.show ? 'scale(1.05)' : 'scale(1)')};
   transition: transform 0.3s ease-in-out;
+  width: 200px;
 
   img {
     width: 100%;
@@ -35,10 +36,11 @@ const JogoInfo = styled.div`
   text-align: center;
   background-color: #483d3d;
   color: white;
-  height: 100%;
+  height: 150px;
   align-items: center;
   flex-direction: column;
   display: block;
+  justify-content: center;
 
   h3,
   p,
@@ -48,6 +50,9 @@ const JogoInfo = styled.div`
 `;
 
 const JogoDescricao = styled.div`
+  min-height: 130px;
+  max-height: 190px;
+  height: auto;
   opacity: ${(props) => (props.show ? 1 : 0)};
   transform: ${(props) => (props.show ? 'translateY(0)' : 'translateY(10px)')};
   transition: opacity 0.5s ease, transform 0.5s ease;
