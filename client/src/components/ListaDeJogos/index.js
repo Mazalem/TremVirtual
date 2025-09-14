@@ -15,16 +15,23 @@ const ListaDeJogosContainer = styled.div`
   border-color: #ddd;
 `;
 
-function ListaDeJogos(props) {
-  const jogosParaExibir = props.jogos
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 10);
+function ListaDeJogos({ jogos = [], atual }) {
+  const pool = jogos.sort(() => Math.random() - 0.5);
+  const jogosParaExibir = [];
+
+  for (let i = 0; i < pool.length && jogosParaExibir.length < 10; i++) {
+    const jogo = pool[i];
+    const jogoId = jogo._id ?? jogo.id;
+    if (String(jogoId) !== String(atual)) {
+      jogosParaExibir.push(jogo);
+    }
+  }
 
   return (
     <ListaDeJogosContainer>
       {jogosParaExibir.map((jogo) => (
         <JogoRecomendado
-          key={jogo.id}
+          key={jogo._id ?? jogo.id}
           jogo={jogo}
         />
       ))}

@@ -76,7 +76,7 @@ function TelaJogo(props) {
         </InfoJogoContainer>
       </IframeInfoContainer>
       <ListaDeJogosContainer>
-        <ListaDeJogos jogos={props.jogos}/>
+        <ListaDeJogos jogos={props.jogos} atual={jogo._id}/>
       </ListaDeJogosContainer>
     </TelaJogoContainer>
   );

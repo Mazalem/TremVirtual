@@ -31,6 +31,27 @@ const Botao = styled.button`
   }
 `;
 
+const BotaoLink = styled.a`
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #463b3b91;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  transition: background-color 0.3s, border-color 0.3s;
+  color: white;
+  font-size: 20px;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #5f505091;
+    border-color: #fff;
+    color: #ff6347;
+  }
+`;
+
 const FormControl = styled.input`
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -107,11 +128,18 @@ const Container = styled.div`
   margin-bottom: 50px;
 `;
 
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+`;
+
 const Title = styled.h1`
   color: #fff;
   text-align: center;
-  margin-bottom: 30px;
   font-size: 36px;
+  flex: 1;
 `;
 
 const LoadingOverlay = styled.div`
@@ -163,52 +191,6 @@ const SuccessOverlay = styled.div`
   }
 `;
 
-const RadioGroup = styled.div`
-  display: flex;
-  gap: 35%;
-  margin-top: 10px;
-  align-items:center;
-  justify-content: center;
-`;
-
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-`;
-
-const RadioInput = styled.input`
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #ddd;
-  border-radius: 50%;
-  outline: none;
-  cursor: pointer;
-  transition: 0.3s;
-  position: relative;
-  background-color: transparent;
-
-  &:checked {
-    background-color: #ff6347;
-    border-color: #ff6347;
-  }
-
-  &:checked::after {
-    content: '';
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 6px;
-    height: 6px;
-    background: white;
-    border-radius: 50%;
-  }
-`;
-
 function FormularioInsercao() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -220,100 +202,98 @@ function FormularioInsercao() {
   const [senha, setSenha] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [logado, setLogado] = useState([]);
-  const [tipo, setTipo] = useState('Professor');
-
-  function handleTipoChange(event){
-    setTipo(event.target.value);
-  };
 
   function togglePassword() {
     setShowPassword(prev => !prev);
   }
 
   useEffect(() => {
-  fetch('/apiusers/verificarLogin', { credentials: 'include' })
-    .then(res => res.json())
-    .then(json => {
-      setLogado(json.user);
-      setTipo(json.user.tipo);
-      setNome(json.user.nome);
-      setEmail(json.user.email);
-      setSenha(json.user.senha);
-    })
-    .catch(() => {
-      fetch('/apiusers/logout', { credentials: 'include' });
-    });
-}, []);
+    fetch('/apiusers/verificarLogin', { credentials: 'include' })
+      .then(res => res.json())
+      .then(json => {
+        setLogado(json.user);
+        setNome(json.user.nome);
+        setEmail(json.user.email);
+        setSenha(json.user.senha);
+      })
+      .catch(() => {
+        fetch('/apiusers/logout', { credentials: 'include' });
+      });
+  }, []);
 
   const handleSubmit = async (event) => {
-  event.preventDefault();
-  setLoading(true);
-  setSuccess(false);
+    event.preventDefault();
+    setLoading(true);
+    setSuccess(false);
 
-  try {
-    if (email !== logado.email) {
-      const res = await fetch('/apiusers/liberado/' + email, { credentials: 'include' });
-      const json = await res.json();
+    try {
+      if (email !== logado.email) {
+        const res = await fetch('/apiusers/liberado/' + email, { credentials: 'include' });
+        const json = await res.json();
 
-      if (!json.liberado) {
+        if (!json.liberado) {
+          setFailure(true);
+          setMensagem(json.mensagem);
+          setTimeout(() => {
+            setFailure(false);
+            setMensagem("");
+          }, 1000);
+          setLoading(false);
+          return;
+        }
+      }
+
+      const data = {
+        nome,
+        email,
+        senha
+      };
+
+      const res2 = await fetch("/apiusers", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+      });
+
+      const json2 = await res2.json();
+
+      setLoading(false);
+
+      if (json2.success) {
+        setSuccess(true);
+        setMensagem(json2.mensagem);
+        setTimeout(() => {
+          setMensagem('');
+          window.location.href = "/perfilUsuario";
+        }, 2000);
+      } else {
         setFailure(true);
-        setMensagem(json.mensagem);
+        setMensagem(json2.mensagem);
         setTimeout(() => {
           setFailure(false);
           setMensagem("");
         }, 1000);
-        setLoading(false);
-        return;
       }
+
+    } catch (error) {
+      setLoading(false);
+      alert("Erro ao atualizar usuário.");
+      window.location.href = "/perfilUsuario";
     }
-
-    const data = {
-      nome,
-      email,
-      senha,
-      tipo
-    };
-
-    const res2 = await fetch("/apiusers", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data),
-    });
-
-    const json2 = await res2.json();
-
-    setLoading(false);
-
-    if (json2.success) {
-      setSuccess(true);
-      setMensagem(json2.mensagem);
-      setTimeout(() => {
-        setMensagem('');
-        window.location.href = "/perfilUsuario";
-      }, 2000);
-    } else {
-      setFailure(true);
-      setMensagem(json2.mensagem);
-      setTimeout(() => {
-        setFailure(false);
-        setMensagem("");
-      }, 1000);
-    }
-
-  } catch (error) {
-    setLoading(false);
-    alert("Erro ao atualizar usuário.");
-    window.location.href = "/perfilUsuario";
-  }
-};
+  };
 
   return (
     <>
       <GlobalStyle />
       <Container>
-        <Title>Editar Usuário</Title>
+        <TitleContainer>
+          <BotaoLink href="/perfilUsuario">
+            <i className="bi bi-arrow-left"></i>
+          </BotaoLink>
+          <Title>Editar Usuário</Title>
+        </TitleContainer>
         <form onSubmit={handleSubmit}>
 
           <div>
@@ -361,20 +341,6 @@ function FormularioInsercao() {
           </div>
 
           <div>
-            <label htmlFor="tipo" className="form-label">Tipo de Usuário</label>
-            <RadioGroup>
-              <RadioLabel>
-                <RadioInput type="radio" name="tipo" value="Professor" checked={tipo === 'Professor'} onChange={handleTipoChange} />
-                Professor
-              </RadioLabel>
-              <RadioLabel>
-                <RadioInput type="radio" name="tipo" value="Aluno" checked={tipo === 'Aluno'} onChange={handleTipoChange} />
-                Aluno
-              </RadioLabel>
-            </RadioGroup>
-          </div><br/>
-
-          <div>
             <Botao type="submit">Editar Usuário</Botao>
           </div>
         </form>
@@ -396,9 +362,9 @@ function FormularioInsercao() {
         
         {(
           <MessageOverlay
-          condicao = {failure}
-          sucesso = {!failure}
-          mensagem = {mensagem}
+            condicao={failure}
+            sucesso={!failure}
+            mensagem={mensagem}
           />
         )}
 

@@ -16,6 +16,7 @@ import EditUser from './routes/EditUser';
 import Erro from './components/Erro';
 import LoginRegister from './routes/Login_Register';
 import { useEffect, useState } from 'react';
+import Cookies from "js-cookie";
 import styled, { keyframes } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
@@ -84,7 +85,7 @@ function Layout({ children }) {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const rotaValida = /^\/(home|jogo\/[^\/?#]+|adicionarMundo|perfilUsuario|editarUsuario|galeria\/[^\/?#]+\/[^\/?#]+|projects\/[^\/?#]+)(\/)?([?#].*)?$/.test(pathname);
+  const rotaValida = /^\/(home|jogo\/[^\/?#]+|mundo(\/[^\/?#]+)?|perfilUsuario|editarUsuario|galeria\/[^\/?#]+\/[^\/?#]+|projects\/[^\/?#]+)(\/)?([?#].*)?$/.test(pathname);
 
   const mostrarNavFooter = rotaValida;
   const removerMargem = !rotaValida && pathname !== '/';
@@ -120,32 +121,45 @@ function AppRoutes() {
         .then(res => res.json())
         .then(json => {
           setAutoLogin(json.sucesso);
-          if (autoLogin === true) {
+          if (json.sucesso) {
+            if (json.user?.tipo) {
+              Cookies.set("tipo", json.user.tipo, { expires: 1, sameSite: 'strict' });
+            }
             window.location.href = "/home";
+          } else {
+            Cookies.remove("tipo");
           }
         });
-      }, []);
+    }, []);
       return children;
   }  
 
   useEffect(() => {
-    fetch('/apiusers/verificarLogin', { credentials: 'include' })
-      .then(res => res.json())
-      .then(json => {
-        setIsLoggedIn(json.logado); 
-        setProfessor(json.user?.tipo === "Professor");
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-        setProfessor(false);
-      })
-      .finally(() => setLoading(false));
-  }, [navigate]);
+  fetch('/apiusers/verificarLogin', { credentials: 'include' })
+    .then(res => res.json())
+    .then(json => {
+      setIsLoggedIn(json.logado); 
+      const isProfessor = json.user?.tipo === "Professor";
+      setProfessor(isProfessor);
+
+      if (json.logado && json.user?.tipo) {
+        Cookies.set("tipo", json.user.tipo, { expires: 1, sameSite: 'strict' });
+      } else {
+        Cookies.remove("tipo");
+      }
+    })
+    .catch(() => {
+      setIsLoggedIn(false);
+      setProfessor(false);
+      Cookies.remove("tipo");
+    })
+    .finally(() => setLoading(false));
+}, [navigate]);
   
   useEffect(() => {
-    fetch('/apimundos/lista')
+    fetch('/apimundos/lista/todos/0')
       .then(res => res.json())
-      .then(json => setDados(json))
+      .then(json => setDados(json.mundos))
       .catch(() => {});
   }, []);
 
@@ -172,7 +186,8 @@ function AppRoutes() {
         <Route path="/" element={<RotaPublica><LoginRegister/></RotaPublica>}/>
         <Route path="/home" element={<RotaPrivada><TelaPrincipal jogos={dados}/></RotaPrivada>} />
         <Route path="/jogo/:index" element={<RotaPrivada><TelaJogo jogos={dados}/></RotaPrivada>} />
-        <Route path="/adicionarMundo" element={<RotaPrivada><RotaProfessor><FormularioInsercao/></RotaProfessor></RotaPrivada>} />
+        <Route path="/mundo" element={<RotaPrivada><RotaProfessor><FormularioInsercao/></RotaProfessor></RotaPrivada>} />
+        <Route path="/mundo/:id" element={<RotaPrivada><RotaProfessor><FormularioInsercao/></RotaProfessor></RotaPrivada>} />
         <Route path="/perfilUsuario" element={<RotaPrivada><AreaUsuario/></RotaPrivada>} />
         <Route path="/editarUsuario" element={<RotaPrivada><EditUser/></RotaPrivada>} />
         <Route path="/galeria/:tipo/:pag" element={<RotaPrivada><GaleriaDeMundos/></RotaPrivada>} />

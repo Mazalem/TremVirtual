@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import Cookies from "js-cookie";
 
 const StyledOffCanvas = styled.div`
   background-color: #2c2525d7;
@@ -92,6 +93,7 @@ function AreaUsuarioOffCanvas() {
     })
       .then(res => {
         if (res.ok) {
+          Cookies.remove("tipo");
           navigate('/');
         } else {
           console.error('Erro ao fazer logout:', res.statusText);
@@ -128,7 +130,7 @@ function AreaUsuarioOffCanvas() {
           </a>
 
           <AreaRestrita>
-          <a href="/adicionarMundo">
+          <a href="/mundo">
             <OptionItem>
               <i className="bi bi-house-add-fill"/> Adicionar Mundos
             </OptionItem>

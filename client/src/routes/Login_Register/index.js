@@ -430,7 +430,11 @@ export default function Login() {
                   <span id="icone"> <i className={`bi ${showPasswordLogin ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i> </span>
                 </Button>
             </div>
-            <div style={{display:"flex", justifyContent: "center", alignItems:"center"}}><CheckButton name='manter' value={true}/> <label for="manter">Manter-me Conectado(a)</label></div><br/>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <CheckButton id="manter" name="manter" value={true} />
+              <label htmlFor="manter">Manter-me Conectado(a)</label>
+            </div>
+            <br/>
             <Button type='Submit' style={{marginLeft: 40 + '%'}}>Login</Button>
           </Form>
         </SignInContainer>

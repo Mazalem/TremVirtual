@@ -6,10 +6,13 @@ const upload = multer({ dest: "uploads/" });
 
 router.get('/', (req, res) => {res.json({ message: 'API está funcionando!' });});
 router.post("/", upload.single("jogoZip"), APIMundosController.cria);
+router.post("/edicao/:id", upload.single("jogoZip"), APIMundosController.edita);
+router.get("/exclusao/:id", APIMundosController.exclui);
 router.get('/lista', APIMundosController.index);
-router.get('/lista/:tipo/:id/:pag', APIMundosController.listaFiltrada);
+router.get('/lista/:tipo/:id', APIMundosController.listaFiltrada);
 router.get('/consulta/:_id', APIMundosController.show);
 router.post('/:id/like', APIMundosController.toggleLike);
 router.get('/:id/isLiked', APIMundosController.isLiked);
+router.get('/consultaResponsavel/:id', APIMundosController.consultaResponsavel);
 
 module.exports = router;

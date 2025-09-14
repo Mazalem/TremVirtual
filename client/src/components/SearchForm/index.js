@@ -96,6 +96,8 @@ function SearchForm(props) {
         className="form-control"
         placeholder={props.placeholder}
         name="query"
+        value={props.value}
+        onChange={props.onChange}
       />
       <BtnSubmit type="submit" className="btn-submit">
         <i className="bi bi-search"></i>

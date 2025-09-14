@@ -26,18 +26,35 @@ class APIModel {
     await colecao.insertOne(dado);
   }
 
-  async lista() {
+  async edita(id, dadoAtualizado) {
     await conexao_bd();
     const colecao = bd().collection("mundos_virtuais");
-    const mundos = await colecao.find({}).toArray();
-    return mundos;
+    const resultado = await colecao.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: dadoAtualizado }
+    );
+    return resultado;
   }
 
+  async deleta(id) {
+    await conexao_bd();
+    const colecao = bd().collection("mundos_virtuais");
+    const resultado = await colecao.deleteOne({ _id: new ObjectId(id) });
+    return resultado;
+  }
+  
   async consulta(id) {
     await conexao_bd();
     const colecao = bd().collection("mundos_virtuais");
     const mundo = await colecao.findOne({ _id: new ObjectId(id) });
     return mundo;
+  }
+
+  async lista() {
+    await conexao_bd();
+    const colecao = bd().collection("mundos_virtuais");
+    const mundos = await colecao.find({}).toArray();
+    return mundos;
   }
 
   async mundosPorUsuario(id) {
@@ -56,35 +73,10 @@ class APIModel {
     return mundos.find({ _id: { $in: usuario.likedMundos.map(id => new ObjectId(id)) } }).toArray();
   }
 
-  async buscarPublicosPorTitulo(query) {
+  async buscarPublicos() {
     await conexao_bd();
     const colecao = bd().collection("mundos_virtuais");
-
-    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(escapeRegex(query), "i");
-
-    return colecao
-      .find({
-        visibilidade: "publico",
-        titulo: { $regex: regex }
-      })
-      .sort({ titulo: 1 })
-      .toArray();
-  }
-
-  async update(id, dadoAtualizado) {
-    await conexao_bd();
-    const colecao = bd().collection("mundos_virtuais");
-    await colecao.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: dadoAtualizado }
-    );
-  }
-
-  async delete(id) {
-    await conexao_bd();
-    const colecao = bd().collection("mundos_virtuais");
-    await colecao.deleteOne({ _id: new ObjectId(id) });
+    return colecao.find({ visibilidade: "publico" }).sort({ titulo: 1 }).toArray();
   }
 
   async toggleLike(mundoId, userId) {

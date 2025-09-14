@@ -17,10 +17,10 @@ function TelaPrincipal(props) {
   const [todosJogos, setTodosJogos] = useState([]);
 
   useEffect(() => {
-    fetch("/apimundos/lista/todos/0/1?q=")
+    fetch("/apimundos/lista/todos/0")
       .then((res) => res.json())
       .then((json) => {
-        setTodosJogos(json.dados.slice(0, 15));
+        setTodosJogos(json.mundos.slice(0, 9));
       })
       .catch((err) => console.error("Erro ao buscar mundos:", err));
   }, []);
@@ -45,7 +45,7 @@ function TelaPrincipal(props) {
         </div>
         <div className="row">
           <div className="col-12">
-            <GaleriaDeJogos titulo={"Todos >"} jogos={todosJogos} />
+            <GaleriaDeJogos inicio={0} fim={9} titulo={"Todos >"} jogos={todosJogos} link={"/galeria/todos/1"}/>
           </div>
         </div>
         <div className="row" id="sobre">

@@ -30,7 +30,7 @@ exports.cria = async function (req, res) {
     var visibilidade = req.body.visibilidade;
     const zipPath = req.file.path;
 
-    const projectName = "project_" + nome.replace(/\s+/g, '').toLowerCase() + "_" + autor.replace(/\s+/g, '').toLowerCase() + "_" + Date.now();
+    const projectName = "project_" + responsavelId + "_" + Date.now();
     const extractPath = path.join(__dirname, "..", "public", "projects", projectName);
 
     try {
@@ -68,6 +68,123 @@ exports.cria = async function (req, res) {
     }
 };
 
+exports.edita = async function (req, res) {
+  try {
+    const id = req.params.id;
+    const mundo = await API.consulta(id);
+
+    if (!mundo) {
+      return res.status(404).send("Mundo não encontrado.");
+    }
+
+    const nome = req.body.nome;
+    const autor = req.body.autor;
+    const descricao = req.body.descricao;
+    const responsavelId = req.body.responsavelId;
+    const visibilidade = req.body.visibilidade;
+
+    let src = mundo.src;
+    let imagem = mundo.imagem;
+
+    if (req.file) {
+      const zipPath = req.file.path;
+
+      if (mundo.src) {
+        const pastaAntiga = path.join(
+          __dirname,
+          "..",
+          "public",
+          "projects",
+          path.basename(path.dirname(mundo.src))
+        );
+        if (fs.existsSync(pastaAntiga)) {
+          fs.rmSync(pastaAntiga, { recursive: true, force: true });
+        }
+      }
+
+      const projectName = "project_" + responsavelId + "_" + Date.now();
+      const extractPath = path.join(
+        __dirname,
+        "..",
+        "public",
+        "projects",
+        projectName
+      );
+
+      fs.mkdirSync(extractPath, { recursive: true });
+      const zip = new AdmZip(zipPath);
+      zip.extractAllTo(extractPath, true);
+
+      const extractedFolders = fs
+        .readdirSync(extractPath)
+        .filter((file) =>
+          fs.statSync(path.join(extractPath, file)).isDirectory()
+        );
+
+      if (extractedFolders.length === 0) {
+        return res.status(400).send("Nenhuma pasta encontrada dentro do ZIP.");
+      }
+
+      const projectFolder = extractedFolders[0];
+      src = `${process.env.SERVIDOR}/projects/${projectName}/${projectFolder}/`;
+      imagem = `${process.env.SERVIDOR}/projects/${projectName}/${projectFolder}/thumbnail.png`;
+
+      fs.unlinkSync(zipPath);
+    }
+
+    await API.edita(id, {
+      titulo: nome,
+      autor,
+      responsavelId,
+      visibilidade,
+      descricao,
+      src,
+      imagem,
+      versao: (parseFloat(mundo.versao) + 0.1).toFixed(1),
+      lancamento: obterDataAtualFormatada(),
+    });
+
+    res.status(200).json({ mensagem: "Mundo editado com sucesso!" });
+  } catch (error) {
+    res.status(500).send("Erro ao editar mundo: " + error.message);
+  }
+};
+
+exports.exclui = async function (req, res) {
+  const cookie = req.session.usuario;
+
+  try {
+    const id = req.params.id;
+    const mundo = await API.consulta(id);
+    
+    if (!mundo) {
+      return res.status(404).send("Mundo não encontrado.");
+    }
+
+    if (String(cookie.id) !== String(mundo.responsavelId)) {
+      return res.status(401).json({ mensagem: "Não autorizado!" });
+    }
+
+    if (mundo.src) {
+      const pasta = path.join(
+        __dirname,
+        "..",
+        "public",
+        "projects",
+        path.basename(path.dirname(mundo.src))
+      );
+      if (fs.existsSync(pasta)) {
+        fs.rmSync(pasta, { recursive: true, force: true });
+      }
+    }
+
+    await API.deleta(id);
+    res.status(200).json({ mensagem: "Mundo excluído com sucesso!" });
+  } catch (error) {
+    res.status(500).send("Erro ao excluir mundo: " + error.message);
+  }
+};
+
 exports.index = async function (req, res) {
     var mundos = await APIModel.lista();
     res.json(mundos);
@@ -79,34 +196,26 @@ exports.show = async function (req, res) {
 };
 
 exports.listaFiltrada = async function (req, res) {
-  const { tipo, id, pag } = req.params;
-  let mundos = [];
-
+  const { tipo, id } = req.params
+  const q = req.query.q || ""
   try {
+    let mundos = []
     if (tipo === "criados") {
-      mundos = await APIModel.mundosPorUsuario(id);
+      mundos = await APIModel.mundosPorUsuario(id)
     } else if (tipo === "favoritos") {
-      mundos = await APIModel.mundosFavoritos(id);
+      mundos = await APIModel.mundosFavoritos(id)
     } else if (tipo === "todos") {
-      const q = req.query.q;
-      mundos = await APIModel.buscarPublicosPorTitulo(q);
+      mundos = await APIModel.buscarPublicos()
     }
-
-    const page = parseInt(pag) || 1;
-    const limit = 30;
-    const totalPaginas = Math.ceil(mundos.length / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    res.json({
-      dados: mundos.slice(startIndex, endIndex),
-      totalPaginas
-    });
+    if (tipo === "todos") {
+      res.json({ mundos, q })
+    } else {
+      res.json({ mundos })
+    }
   } catch (err) {
-    console.error("Erro em listaFiltrada:", err);
-    res.status(500).json({ error: "Erro ao buscar mundos" });
+    res.status(500).json({ error: "Erro ao buscar mundos" })
   }
-};
+}
 
 exports.toggleLike = async function (req, res) {
   const { id } = req.params;
@@ -144,5 +253,19 @@ exports.isLiked = async function (req, res) {
     res.status(500).json({ error: "Erro ao verificar curtida" });
   }
 };
+
+exports.consultaResponsavel = async function (req, res) {
+  try {
+    const mundo = await APIModel.consulta(req.params.id);
+    if (!mundo) {
+      return res.json({ responsavelId: null });
+    }
+    return res.json({ responsavelId: mundo.responsavelId || null });
+  } catch (err) {
+    console.error("Erro em consultaResponsavel:", err);
+    return res.status(500).json({ error: "Erro ao consultar responsável" });
+  }
+};
+
 
 

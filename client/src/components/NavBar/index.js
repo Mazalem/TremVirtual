@@ -235,6 +235,8 @@ function NavBar() {
   };
   
   const [usuario, setUsuario] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     fetch('/apiusers/verificarLogin', { credentials: 'include' })
       .then(res => res.json())
@@ -244,9 +246,10 @@ function NavBar() {
       .catch(err => console.error('Erro ao carregar o usuário', err));
   }, []);
 
-  const handleSearch = (query) => {
-    navigate(`/galeria/todos/1?q=${query}`);
-  }
+   const handleSearch = (event) => {
+    navigate(`/galeria/todos/1?q=${searchQuery}`);
+    setSearchQuery("");
+  };
 
   return (
     <div>
@@ -281,7 +284,7 @@ function NavBar() {
             </OffCanvasTrigger>
           </NavbarNav>
 
-            <SearchForm placeholder="Pesquisar..." onSubmit={handleSearch}/>
+            <SearchForm placeholder="Pesquisar..." onSubmit={handleSearch} onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery}/>
           </NavbarControls>
         </ContainerFluid>
       </Navbar>
