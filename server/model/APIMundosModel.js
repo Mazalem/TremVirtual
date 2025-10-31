@@ -5,12 +5,12 @@ require('dotenv').config();
 const ClienteMongo = mongodb.MongoClient;
 var cliente;
 
-async function conexao_bd(){
+async function conexao_bd() {
   if (!cliente)
     cliente = await ClienteMongo.connect(process.env.DB);
 };
 
-function bd(){
+function bd() {
   return cliente.db("Trem_Virtual");
 };
 
@@ -42,7 +42,7 @@ class APIModel {
     const resultado = await colecao.deleteOne({ _id: new ObjectId(id) });
     return resultado;
   }
-  
+
   async consulta(id) {
     await conexao_bd();
     const colecao = bd().collection("mundos_virtuais");
@@ -58,10 +58,53 @@ class APIModel {
   }
 
   async mundosPorUsuario(id) {
-  await conexao_bd();
-  const colecao = bd().collection("mundos_virtuais");
-  return colecao.find({ responsavelId: id }).toArray();
-}
+    await conexao_bd();
+    const colecao = bd().collection("mundos_virtuais");
+    return colecao.find({ responsavelId: id }).toArray();
+  }
+
+  async mundosDoUsuarioCompleto(userId) {
+    await conexao_bd();
+
+    const users = bd().collection("users");
+    const mundos = bd().collection("mundos_virtuais");
+
+    const userObjectId = new ObjectId(userId);
+    const usuario = await users.findOne({ _id: userObjectId });
+    if (!usuario) return [];
+
+    const likedIds = (usuario.likedMundos || []).filter(Boolean);
+
+    const likedObjectIds = likedIds
+      .filter(id => ObjectId.isValid(id))
+      .map(id => new ObjectId(id));
+
+    const orConditions = [
+      { responsavelId: userId },
+      { responsavelId: userObjectId },
+    ];
+
+    if (likedObjectIds.length > 0)
+      orConditions.push({ _id: { $in: likedObjectIds } });
+
+    if (likedIds.length > 0)
+      orConditions.push({ _id: { $in: likedIds } });
+
+    const todosMundos = await mundos.find({ $or: orConditions }).toArray();
+
+    const unicos = [];
+    const vistos = new Set();
+
+    for (const m of todosMundos) {
+      const idStr = m._id.toString();
+      if (!vistos.has(idStr)) {
+        vistos.add(idStr);
+        unicos.push(m);
+      }
+    }
+
+    return unicos;
+  }
 
   async mundosFavoritos(userId) {
     await conexao_bd();
@@ -120,7 +163,7 @@ class APIModel {
       const mundo = await mundos.findOne({ _id: mundoObjectId });
       return { liked: true, likes: mundo.likes };
     }
-}
+  }
 
 }
 

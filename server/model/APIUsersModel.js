@@ -5,12 +5,12 @@ require('dotenv').config();
 const ClienteMongo = mongodb.MongoClient;
 var cliente;
 
-async function conexao_bd(){
+async function conexao_bd() {
   if (!cliente)
     cliente = await ClienteMongo.connect(process.env.DB);
 };
 
-function bd(){
+function bd() {
   return cliente.db("Trem_Virtual");
 };
 
@@ -32,7 +32,7 @@ class APIModel {
     const mundos = await colecao.find({}).toArray();
     return mundos;
   }
-  
+
   async consulta(id) {
     await conexao_bd();
     const colecao = bd().collection("users");
@@ -63,13 +63,41 @@ class APIModel {
     );
     const usuario = await colecao.findOne({ _id: new ObjectId(id) });
     return usuario;
-}
+  }
 
   async delete(id) {
     await conexao_bd();
     const colecao = bd().collection("users");
     await colecao.deleteOne({ _id: new ObjectId(id) });
   }
+
+  async pushAluno(idProfessor, idAluno) {
+    await conexao_bd();
+    const colecao = bd().collection("users");
+    await colecao.updateOne(
+      { _id: new ObjectId(idProfessor) },
+      { $addToSet: { alunosId: idAluno } }
+    );
+  }
+
+  async pullAluno(idProfessor, idAluno) {
+    await conexao_bd();
+    const colecao = bd().collection("users");
+    await colecao.updateOne(
+      { _id: new ObjectId(idProfessor) },
+      { $pull: { alunosId: idAluno } }
+    );
+  }
+
+  async consultaVarios(ids) {
+    await conexao_bd();
+    const colecao = bd().collection("users");
+    const objectIds = ids.map(id => new ObjectId(id));
+    const usuarios = await colecao.find({ _id: { $in: objectIds } }).toArray();
+    return usuarios;
+  }
+
+
 }
 
 module.exports = new APIModel();

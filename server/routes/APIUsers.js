@@ -10,5 +10,10 @@ router.post('/autologin', APIController.autoLogin);
 router.post('/login', APIController.login);
 router.get('/logout', APIController.logout);
 router.get('/verificarLogin', APIController.verificarLogin);
+router.get('/entrarTurma/:idAluno/:idProfessor', APIController.entrarTurma);
+router.get('/sairTurma/:idAluno/:idProfessor', APIController.sairTurma);
+router.get('/verificarTurma/:idAluno', APIController.verificarTurma);
+router.get('/retirarAluno/:idAluno/:idProfessor', APIController.retirarAluno);
+router.get('/listarAlunos/:idProfessor', APIController.listarAlunos);
 
 module.exports = router;

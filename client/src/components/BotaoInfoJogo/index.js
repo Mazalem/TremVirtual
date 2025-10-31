@@ -28,12 +28,13 @@ const StyledButton = styled.button`
   }
 `;
 
-const Botao = ({ unclicked, clicked, change = false, isActive = false, onClick }) => {
+const Botao = ({ unclicked, clicked, change = false, isActive = false, onClick, children }) => {
   const iconClass = change ? (isActive ? clicked : unclicked) : unclicked;
 
   return (
     <StyledButton type="button" onClick={onClick} $active={change && isActive}>
       <i className={iconClass} aria-hidden="true" />
+      {children && <span style={{ marginLeft: '10px' }}>{children}</span>}
     </StyledButton>
   );
 };

@@ -3,6 +3,7 @@ const APIModel = require("../model/APIMundosModel");
 const AdmZip = require("adm-zip");
 const path = require("path");
 const fs = require("fs");
+const Users = require("../model/APIUsersModel");
 require('dotenv').config();
 
 const uploadsDir = path.join(__dirname, '..', 'uploads');
@@ -204,6 +205,12 @@ exports.listaFiltrada = async function (req, res) {
       mundos = await APIModel.mundosPorUsuario(id)
     } else if (tipo === "favoritos") {
       mundos = await APIModel.mundosFavoritos(id)
+    } else if (tipo === "turma") {
+      const aluno = await Users.consulta(id)
+      if (!aluno || aluno.tipo !== "Aluno" || !aluno.professorId) {
+        return res.json({ mundos: [] })
+      }
+      mundos = await APIModel.mundosDoUsuarioCompleto(aluno.professorId)
     } else if (tipo === "todos") {
       mundos = await APIModel.buscarPublicos()
     }
@@ -227,7 +234,6 @@ exports.toggleLike = async function (req, res) {
     const resultado = await API.toggleLike(id, userId);
     res.json(resultado);
   } catch (error) {
-    console.error("Erro no toggleLike:", error);
     res.status(500).json({ error: "Erro ao curtir/descurtir mundo" });
   }
 };
@@ -249,7 +255,6 @@ exports.isLiked = async function (req, res) {
 
     res.json({ liked: jaCurtiu, likes: mundo.likes });
   } catch (error) {
-    console.error("Erro no isLiked:", error);
     res.status(500).json({ error: "Erro ao verificar curtida" });
   }
 };
@@ -262,10 +267,6 @@ exports.consultaResponsavel = async function (req, res) {
     }
     return res.json({ responsavelId: mundo.responsavelId || null });
   } catch (err) {
-    console.error("Erro em consultaResponsavel:", err);
     return res.status(500).json({ error: "Erro ao consultar responsável" });
   }
 };
-
-
-
